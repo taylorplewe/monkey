@@ -45,3 +45,15 @@ a {
 .download-section p {
 	margin: 0;
 }
+.imgs-1 {
+	justify-content: center;
+	display: flex;
+	gap: 16px;
+}
+video {
+	background: black;
+}
+.vid {
+	display: flex;
+	justify-content: center;
+}
