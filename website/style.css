@@ -58,3 +58,10 @@ video {
 	background: black;
 	width: 100%;
 }
+
+@media screen and (max-width: 720px) {
+	main {
+		width: initial;
+		padding: 0 16px;
+	}
+}
