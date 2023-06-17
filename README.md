@@ -1,6 +1,8 @@
 # monkey
 NES port of the [Wall Kickers mobile game](http://wallkickers.com/)
 
+To run it just open `bin\monkey.nes` in an NES emulator; [Mesen](http://mesen.ca/) is the best one out there
+
 ---
 
 Syntax of the code is in 6502 assembly for use with the NESASM3 compiler, but with some minor additions I've added via a pre-compiler I wrote called dundalk:
