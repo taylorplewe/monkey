@@ -3,7 +3,7 @@ body {
 	font-family: courier;
 }
 main {
-	width: 60%;
+	width: 580px;
 	margin: 64px auto 0 auto;
 }
 h1 {
@@ -11,9 +11,14 @@ h1 {
 	color: #eeeeee;
 }
 p {
-	color: #aaaaaa;
+	color: #afafaf;
 	font-size: 14pt;
 	font-weight: bold;
+}
+p.faint {
+	color: #888888;
+	font-size: 12pt;
+	font-weight: normal;
 }
 a {
 	text-decoration: none;
@@ -31,4 +36,12 @@ a {
 }
 .btn-span.wide {
 	width: unset;
+}
+.download-section {
+	background: #181818;
+	border-radius: 16px;
+	padding: 16px;
+}
+.download-section p {
+	margin: 0;
 }
