@@ -8,7 +8,6 @@ To run it just open `bin\monkey.nes` in an NES emulator; [Mesen](http://mesen.ca
 Credits:
 - [Kumobius](http://www.kumobius.com/) for making the original game; I copied and modified a lot of the graphics over
 - famitone2 is the sound engine used
-- everything else is me
 
 ---
 
