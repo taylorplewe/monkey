@@ -67,6 +67,8 @@ jsr monkey.TurnAround
 ```
 - `>` ; dundalk will create a unique local label for this and the next occurence of `>`; useful for branching over a only few instructions frequently
 
+Running dundalk on an assembly file, which serves as a starting place and which should `.include "..."` files such that all files in your codebase can be reached by an `.include` tree, will compile the whole codebase into one -dlk.s file, e.g. "main-dlk.s".  If you're wondering about anything else pertaining to how dundalk works just look at that file and reverse engineer it.
+
 ---
 
 Acquiring a binary for NESASM3 is not simple so I've just included one in the repo.  To build you should just be able to run `build-and-run-game.ps1` in PowerShell.  It assumes you have an emulator set as the default program for .nes files.
