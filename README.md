@@ -67,7 +67,7 @@ jsr monkey.TurnAround
 ```
 - `>` ; dundalk will create a unique local label for this and the next occurence of `>`; useful for branching over a only few instructions frequently
 
-Running dundalk on an assembly file, which serves as a starting place and which should `.include "..."` files such that all files in your codebase can be reached by an `.include` tree, will compile the whole codebase into one -dlk.s file, e.g. "main-dlk.s".  If you're wondering about anything else pertaining to how dundalk works just look at that file and reverse engineer it.
+Running dundalk on an assembly file, which serves as a starting place and which should `.include "..."` files such that all files in your codebase can be reached by an `.include` tree, will compile the whole codebase into one -dlk.s file, e.g. "main-dlk.s", which shoud then be sent through NESASM3.  If you're wondering about anything else pertaining to how dundalk works just look at that file and reverse engineer it.
 
 ---
 
