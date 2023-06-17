@@ -51,6 +51,9 @@ a {
 .imgs-1 img {
 	width: 80%;
 }
+.imgs-1 :not(:first-child) {
+	margin-top: 16px;
+}
 video {
 	background: black;
 	width: 100%;
