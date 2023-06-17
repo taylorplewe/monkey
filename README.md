@@ -3,9 +3,14 @@ NES port of the [Wall Kickers mobile game](http://wallkickers.com/)
 
 To run it just open `bin\monkey.nes` in an NES emulator; [Mesen](http://mesen.ca/) is the best one out there
 
+Credits:
+- [Kumobius](http://www.kumobius.com/) for making the original game; I copied most of the graphics over
+- famitone2 is the sound engine used
+- everything else is me
+
 ---
 
-Syntax of the code is in 6502 assembly for use with the NESASM3 compiler, but with some minor additions I've added via a pre-compiler I wrote called dundalk:
+Syntax of the code is 6502 assembly for use with the NESASM3 compiler, but with some minor additions I've added via a pre-compiler I wrote called dundalk:
 
 - `class <name>` ; all `var`s, `const`s and labels will be unique to this class and can be invoked elsewhere in the codebase with dot notation:
 ```
