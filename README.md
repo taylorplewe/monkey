@@ -42,7 +42,7 @@ idset STATE {
 }
 ```
 dundalk would replace occurences of `STATE.BFLIP` with `2`.
-- using `var`s and `const`s underneath a global label e.g. `TurnAround:` will cause those vars and consts to be local to this label, and can be invoked by dot notation:
+- using `var`s and `const`s underneath a global label e.g. `TurnAround:` will cause those vars and consts to be local to that label, which is very useful for function parameters, and can be invoked by dot notation:
 ```
 class monkey
 
