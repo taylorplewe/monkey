@@ -174,8 +174,6 @@ forever:
 		jsr disp.UpdateTitle
 	.forevershared:
 
-	jsr ft.FamiToneUpdate
-
 	; DEBUG
 	lda input.buttonsDown
 	and #input.BTN_SELECT
@@ -185,6 +183,8 @@ forever:
 	>
 
 	.pausedend:
+	
+	jsr ft.FamiToneUpdate
 
 	lda input.buttonsDown+1
 	sta input.buttonsPressed+1

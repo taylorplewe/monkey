@@ -97,12 +97,12 @@ forever:
 		jsr c4UpdateTitle
 		jsr d1UpdateTitle
 	.forevershared:
-	jsr f2FamiToneUpdate
 	lda <i0b8
 	and #i0b2
 	beq .b3
 	.b3:
 	.pausedend:
+	jsr f2FamiToneUpdate
 	lda <i0b8+1
 	sta <i0b9+1
 	lda <i0b8+2
