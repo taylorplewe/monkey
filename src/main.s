@@ -45,6 +45,7 @@ var [1] ppuctrl
 var [1] ppumask
 var [2] seed
 var [2] score ; total # NT's risen
+var [1] paused ; added last minute lmao
 
 	; PRG
 	.bank 0
@@ -133,6 +134,10 @@ forever:
 	and #BOOLS_TITLE
 	bne .title
 	; game loop
+		; pause logic
+			jsr ctrl.Pause
+			lda paused
+			bne .pausedend
 		lda ctrl.victorind
 		beq >
 			jsr monkey.UpdateVictor
@@ -178,6 +183,8 @@ forever:
 		;jsr disp.IncreaseScore
 		;jsr ctrl.IncreaseHexScore
 	>
+
+	.pausedend:
 
 	lda input.buttonsDown+1
 	sta input.buttonsPressed+1
@@ -261,11 +268,11 @@ nmi:
 	.include "src/input.s"
 	.include "src/obj.s"
 	.include "src/gen.s"
-	.include "src/ctrl.s"
 	
 ;
 	.bank 1
 	.org $a000
+	.include "src/ctrl.s"
 	.include "src/famitone2.s"
 	.include "src/fx.s"
 sounds:

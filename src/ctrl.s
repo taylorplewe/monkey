@@ -282,3 +282,39 @@ IncreaseHexScore:
 		lda #20
 		sta obj.timerWallCtrAmt
 		rts
+
+Pause:
+	; p1
+	lda input.buttonsDown+1
+	and #input.BTN_START
+	beq .p2
+	lda input.buttonsPressed+1
+	and #input.BTN_START
+	beq .act
+	.p2:
+	lda g.boolParty
+	and #g.BOOLS_MULTIPLAYER
+	beq .end
+	lda input.buttonsDown+2
+	and #input.BTN_START
+	beq .end
+	lda input.buttonsPressed+2
+	and #input.BTN_START
+	bne .end
+		.act:
+		lda g.paused
+		beq .pause
+		;unpause
+			lda #0
+			sta g.paused
+			lda g.ppumask
+			and #%00011111
+			sta g.ppumask
+			rts
+		.pause:
+			lda #1
+			sta g.paused
+			lda g.ppumask
+			ora #%11100000
+			sta g.ppumask
+	.end: rts

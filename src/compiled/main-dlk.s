@@ -60,6 +60,9 @@ forever:
 	lda <b10
 	and #b7
 	bne .title
+			jsr c4Pause
+			lda <p2
+			bne .pausedend
 		lda <c4v0
 		beq .b1
 			jsr m8UpdateVictor
@@ -99,6 +102,7 @@ forever:
 	and #i0b2
 	beq .b3
 	.b3:
+	.pausedend:
 	lda <i0b8+1
 	sta <i0b9+1
 	lda <i0b8+2
@@ -4291,6 +4295,8 @@ g0ApplyYOffset:
 	.nah:
 	lda <g0ApplyYOffsetn0
 	rts
+	.bank 1
+	.org $a000
 	
 
 c4InitTitle:
@@ -4537,8 +4543,39 @@ c4IncreaseHexScore:
 		lda #20
 		sta <o4t14
 		rts
-	.bank 1
-	.org $a000
+c4Pause:
+	lda <i0b8+1
+	and #i0b3
+	beq .p2
+	lda <i0b9+1
+	and #i0b3
+	beq .act
+	.p2:
+	lda <b10
+	and #b6
+	beq .end
+	lda <i0b8+2
+	and #i0b3
+	beq .end
+	lda <i0b9+2
+	and #i0b3
+	bne .end
+		.act:
+		lda <p2
+		beq .pause
+			lda #0
+			sta <p2
+			lda <p1
+			and #%00011111
+			sta <p1
+			rts
+		.pause:
+			lda #1
+			sta <p2
+			lda <p1
+			ora #%11100000
+			sta <p1
+	.end: rts
 	
 
 FT_BASE_ADR		= $0300	
@@ -6636,6 +6673,7 @@ p1 .rs 1
 b10 .rs 1
 p0 .rs 1
 c2 .rs 1
+p2 .rs 1
 s2 .rs 2
 s3 .rs 2
 c4t0 .rs 1
