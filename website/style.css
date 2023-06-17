@@ -46,14 +46,12 @@ a {
 	margin: 0;
 }
 .imgs-1 {
-	justify-content: center;
-	display: flex;
-	gap: 16px;
+	text-align: center;
+}
+.imgs-1 img {
+	width: 80%;
 }
 video {
 	background: black;
-}
-.vid {
-	display: flex;
-	justify-content: center;
+	width: 100%;
 }
