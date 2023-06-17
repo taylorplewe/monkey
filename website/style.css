@@ -8,15 +8,15 @@ main {
 }
 h1 {
 	text-align: center;
-	color: #eeeeee;
+	color: white;
 }
 p {
-	color: #afafaf;
+	color: #dddddd;
 	font-size: 14pt;
 	font-weight: bold;
 }
 p.faint {
-	color: #888888;
+	color: #999999;
 	font-size: 12pt;
 	font-weight: normal;
 }
