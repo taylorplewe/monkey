@@ -454,12 +454,6 @@ ScrollUp:
 		bcs .lvlend
 			dec gen.nextlvl
 			bne .lvlend
-			lda gen.cy
-			sta $142
-			lda gen.cstorey
-			sta $143
-			lda scrollForNextGen
-			sta $144
 			jsr gen.GenerateWholeHalf
 		.lvlend:
 		; move walls

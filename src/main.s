@@ -128,9 +128,6 @@ forever:
 	>
 	jsr input.Read
 
-	lda gen.nextlvl
-	sta $140
-
 	; on title screen?
 	lda boolParty
 	and #BOOLS_TITLE

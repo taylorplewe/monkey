@@ -57,8 +57,6 @@ forever:
 		inc <s2+1
 	.b0:
 	jsr i0Read
-	lda <g0n0
-	sta $140
 	lda <b10
 	and #b7
 	bne .title
@@ -522,12 +520,6 @@ d1ScrollUp:
 		bcs .lvlend
 			dec <g0n0
 			bne .lvlend
-			lda <g0c0
-			sta $142
-			lda <g0c1
-			sta $143
-			lda <d1s1
-			sta $144
 			jsr g0GenerateWholeHalf
 		.lvlend:
 		lda #o4n2
