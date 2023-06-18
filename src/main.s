@@ -178,12 +178,12 @@ forever:
 	lda input.buttonsDown
 	and #input.BTN_SELECT
 	beq >
-		;jsr disp.IncreaseScore
-		;jsr ctrl.IncreaseHexScore
+		jsr disp.IncreaseScore
+		jsr ctrl.IncreaseHexScore
 	>
 
 	.pausedend:
-	
+
 	jsr ft.FamiToneUpdate
 
 	lda input.buttonsDown+1

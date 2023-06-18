@@ -1125,7 +1125,7 @@ SD_thorn_l_flip:
 	lda #HIGH(sd_thorn_l_flip_tiles)
 	sta SD_thorn_flipping.addr+1
 	lda SoftDrawObjs.cx
-	sta hornyballsxxx
+	sta temp_x
 	lda obj.timerWallCtrAmt
 	sec
 	sbc obj.timerWallCtr
@@ -1159,14 +1159,14 @@ SD_thorn_flipping:
 		sta g.OAM_Y, x
 		lda flip
 		sta g.OAM_ATTR, x
-		lda hornyballsxxx
+		lda temp_x
 		sta g.OAM_X, x
 		.r:
 		iny
 		lda [addr], y
 		beq .next
 		sta g.OAM_TILE + 4, x
-		lda hornyballsxxx
+		lda temp_x
 		clc
 		adc #8
 		sta g.OAM_X + 4, x
@@ -1196,7 +1196,7 @@ SD_thorn_flipping:
 	tax
 	rts
 
-var [1] hornyballsxxx
+var [1] temp_x
 
 sd_thorn_r_flip_tiles:
 	.db 0,	   $c4|1 ; frame 0, 1
@@ -1216,7 +1216,7 @@ SD_thorn_r_flip:
 	lda SoftDrawObjs.cx
 	sec
 	sbc #8
-	sta hornyballsxxx
+	sta temp_x
 	lda obj.timerWallCtrAmt
 	sec
 	sbc obj.timerWallCtr

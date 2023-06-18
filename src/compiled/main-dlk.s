@@ -100,6 +100,8 @@ forever:
 	lda <i0b8
 	and #i0b2
 	beq .b3
+		jsr d1IncreaseScore
+		jsr c4IncreaseHexScore
 	.b3:
 	.pausedend:
 	jsr f2FamiToneUpdate
@@ -1109,7 +1111,7 @@ d1SD_thorn_l_flip:
 	lda #HIGH(d1sd_thorn_l_flip_tiles)
 	sta <d1SD_thorn_flippinga0+1
 	lda <d1SoftDrawObjsc0
-	sta <d1h1
+	sta <d1t3
 	lda <o4t14
 	sec
 	sbc <o4t15
@@ -1140,14 +1142,14 @@ d1SD_thorn_flipping:
 		sta o0, x
 		lda <d1SD_thorn_flippingf0
 		sta o2, x
-		lda <d1h1
+		lda <d1t3
 		sta o3, x
 		.r:
 		iny
 		lda [d1SD_thorn_flippinga0], y
 		beq .next
 		sta o1 + 4, x
-		lda <d1h1
+		lda <d1t3
 		clc
 		adc #8
 		sta o3 + 4, x
@@ -1194,7 +1196,7 @@ d1SD_thorn_r_flip:
 	lda <d1SoftDrawObjsc0
 	sec
 	sbc #8
-	sta <d1h1
+	sta <d1t3
 	lda <o4t14
 	sec
 	sbc <o4t15
@@ -1585,9 +1587,9 @@ d1SD_flip:
 		dec <d1SoftDrawObjsn0
 	.med:
 			lda d1flippingwalltiles + 2, x
-			sta <d1t3
+			sta <d1t4
 			lda d1flippingwalltiles + 3, x
-			sta <d1t3+1
+			sta <d1t4+1
 			lda d1flippingwallattrs + 2, x
 			sta <d1a1
 			lda d1flippingwallattrs + 3, x
@@ -1596,9 +1598,9 @@ d1SD_flip:
 			and #1
 			beq .b2
 				lda d1flippingbetweentiles, x
-				sta <d1t3
+				sta <d1t4
 				lda d1flippingbetweentiles+1, x
-				sta <d1t3+1
+				sta <d1t4+1
 				lda d1flippingbetweenattrs, x
 				sta <d1a1
 				lda d1flippingbetweenattrs+1, x
@@ -1608,7 +1610,7 @@ d1SD_flip:
 		sta o3, y
 		lda <d1SoftDrawObjsc1
 		sta o0, y
-		lda <d1t3
+		lda <d1t4
 		sta o1, y
 		lda <d1a1
 		sta o2, y
@@ -1618,7 +1620,7 @@ d1SD_flip:
 		sta o3 + 4, y
 		lda <d1SoftDrawObjsc1
 		sta o0 + 4, y
-		lda <d1t3 + 1
+		lda <d1t4 + 1
 		sta o1 + 4, y
 		lda <d1a1 + 1
 		sta o2 + 4, y
@@ -1801,7 +1803,7 @@ d1SD_score:
 		bmi .end
 		asl a
 		clc
-		adc #d1t4
+		adc #d1t5
 		sta o1, y
 		lda <d1SD_scorex0
 		sta o3, y
@@ -2256,10 +2258,10 @@ d1SD_monkeyTails:
 		ldy <d1o3
 		lda <m8y0, x
 		clc
-		adc #d1t8
+		adc #d1t9
 		bcs .drawret
 		sta o0, y
-		lda #d1t5
+		lda #d1t6
 		sta o1, y
 		lda <m8b8, x
 		pha
@@ -2275,10 +2277,10 @@ d1SD_monkeyTails:
 		sta o2, y
 		pla
 		bpl .b0
-			lda #d1t7
+			lda #d1t8
 			bne .drawend 
 		.b0:
-		lda #d1t6
+		lda #d1t7
 		.drawend:
 		clc
 		adc <m8x0, x
@@ -6631,35 +6633,35 @@ b3 = %00000100
 o0 = $0200
 o3 = o0+ 3
 o1 = o0+ 1
-d1t5 = $4e| 1
+d1t6 = $4e| 1
 d1o0 = $f0
 d1o1 = $f2
 d1o2 = $f4
 d1a2 = $e6| 1
-d1t8 = 6
+d1t9 = 6
 d1m0 = 112
 d1f1 = 2
 d1s4 = 140
-d1t6 = -5
+d1t7 = -5
 d1c5 = 32
 d1v0 = %10000000
 d1t1 = 114
 d1o5 = $4d
 d1t2 = $50
 d1w0 = $20
-d1t4 = $6c| 1
+d1t5 = $6c| 1
 d1o4 = 94
 d1f0 = 120
 d1h0 = %01000000
 d1y0 = 16
 d1c2 = $5a| 1
-d1t7 = m8w0- 3
+d1t8 = m8w0- 3
 d1p0 = $0100
 d1s3 = $2b
 d1c3 = 128 - 12
 g0h5 = 200
 g0h2 = 200
-g0h3 = 22	
+g0h3 = 52	
 g0o1 = 4
 g0h1 = 120
 g0h4 = 139
@@ -6712,6 +6714,7 @@ d1c0 .rs 1
 d1o3 .rs 1
 d1s0 .rs 1
 d1e1 .rs 1
+d1t3 .rs 1
 d1a1 .rs 2
 d1a0 .rs 1
 d1e2 .rs 1
@@ -6723,9 +6726,8 @@ d1e0 .rs 1
 d1u0 .rs 1
 d1m2 .rs 1
 d1b0 .rs 1
-d1h1 .rs 1
 d1f2 .rs 1
-d1t3 .rs 2
+d1t4 .rs 2
 d1n0 .rs 1
 d1m1 .rs 1
 d1c4 .rs 1

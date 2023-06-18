@@ -81,7 +81,7 @@ NUM_INIT_OBJS = (Init - initscenario) / 5
 const HARD_LVL_1 50
 const HARD_LVL_2 120
 const HARD_LVL_3 200
-const HARD_LVL_1_FRAC 22	; OUT OF 256
+const HARD_LVL_1_FRAC 52	; OUT OF 256
 const HARD_LVL_2_FRAC 139
 const HARD_LVL_3_FRAC 200
 
