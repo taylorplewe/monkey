@@ -100,8 +100,6 @@ forever:
 	lda <i0b8
 	and #i0b2
 	beq .b3
-		jsr d1IncreaseScore
-		jsr c4IncreaseHexScore
 	.b3:
 	.pausedend:
 	jsr f2FamiToneUpdate
