@@ -73,4 +73,6 @@ Running dundalk on an assembly file, which serves as a starting place and which 
 
 ---
 
-Acquiring a binary for NESASM3 is not simple so I've just included one in the repo.  To build you should just be able to run `build-and-run-game.ps1` in PowerShell.  It assumes you have an emulator set as the default program for .nes files.
+Acquiring a binary for NESASM3 is not simple so I've just included one in the repo.
+
+To build you should just be able to run `build-and-run-game.ps1` in PowerShell.  It assumes you have an emulator set as the default program for .nes files.
