@@ -81,6 +81,7 @@ NUM_INIT_OBJS = (Init - initscenario) / 5
 const HARD_LVL_1 50
 const HARD_LVL_2 120
 const HARD_LVL_3 200
+const HARD_LVL_0_FRAC 10
 const HARD_LVL_1_FRAC 52	; OUT OF 256
 const HARD_LVL_2_FRAC 139
 const HARD_LVL_3_FRAC 200
@@ -144,7 +145,7 @@ Generate:
 	bcs .lvl2
 	cmp #HARD_LVL_1
 	bcs .lvl1
-	bcc .easy
+	bcc .lvl0
 	.lvl3:
 		cpx #HARD_LVL_3_FRAC
 		bcc .hard
@@ -155,6 +156,10 @@ Generate:
 		bcs .easy
 	.lvl1:
 		cpx #HARD_LVL_1_FRAC
+		bcc .hard
+		bcs .easy
+	.lvl0:
+		cpx #HARD_LVL_0_FRAC
 		bcs .easy
 	.hard:
 		lda scen.scenarios_hard, y

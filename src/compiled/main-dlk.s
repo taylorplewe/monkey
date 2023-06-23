@@ -4093,16 +4093,20 @@ g0Generate:
 	bcs .lvl2
 	cmp #g0h0
 	bcs .lvl1
-	bcc .easy
+	bcc .lvl0
 	.lvl3:
-		cpx #g0h5
+		cpx #g0h6
 		bcc .hard
 		bcs .easy
 	.lvl2:
-		cpx #g0h4
+		cpx #g0h5
 		bcc .hard
 		bcs .easy
 	.lvl1:
+		cpx #g0h4
+		bcc .hard
+		bcs .easy
+	.lvl0:
 		cpx #g0h3
 		bcs .easy
 	.hard:
@@ -6761,14 +6765,15 @@ d1t8 = m8w0- 3
 d1p0 = $0100
 d1s3 = $2b
 d1c3 = 128 - 12
-g0h5 = 200
+g0h6 = 200
 g0h2 = 200
-g0h3 = 52	
+g0h4 = 52	
 g0o1 = 4
 g0h1 = 120
-g0h4 = 139
+g0h5 = 139
 g0n1 = o4n2/ 2
 g0t0 = 190
+g0h3 = 10
 g0h0 = 50
 b2 = %00000010
 o2 = o0+ 2
