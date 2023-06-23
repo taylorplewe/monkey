@@ -1,9 +1,10 @@
 # monkey
+
+[Main website for the game](https://taylorplewe.github.io/monkey)
+
 NES port of the [Wall Kickers mobile game](http://wallkickers.com/)
 
 To run it just open `bin\monkey.nes` in an NES emulator; [Mesen](http://mesen.ca/) is the best one out there
-
-[Main website for the game](https://taylorplewe.github.io/monkey)
 
 Credits:
 - [Kumobius](http://www.kumobius.com/) for making the original game; I copied and modified a lot of the graphics over
@@ -72,4 +73,6 @@ Running dundalk on an assembly file, which serves as a starting place and which 
 
 ---
 
-Acquiring a binary for NESASM3 is not simple so I've just included one in the repo.  To build you should just be able to run `build-and-run-game.ps1` in PowerShell.  It assumes you have an emulator set as the default program for .nes files.
+Acquiring a binary for NESASM3 is not simple so I've just included one in the repo.
+
+To build you should just be able to run `build-and-run-game.ps1` in PowerShell.  It assumes you have an emulator set as the default program for .nes files.
