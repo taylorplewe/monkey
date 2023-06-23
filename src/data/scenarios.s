@@ -56,8 +56,8 @@ scenarios_easy:
 			.db 60, 0, 0, obj.TYPES.RIGHT
 		.2_5:
 			.db 50
-			.db 52, 88, 1, obj.TYPES.BOUNCE
-			.db 170, 0, 1, obj.TYPES.BOUNCE
+			.db 170, 88, 1, obj.TYPES.BOUNCE
+			.db 52, 0, 1, obj.TYPES.BOUNCE
 		.2_6:
 			.db 120
 			.db 52, 168, 5, obj.TYPES.SPDUP
@@ -83,9 +83,9 @@ scenarios_easy:
 			.db 136, 0, 1, obj.TYPES.NORMAL
 		.3_3:
 			.db 1
-			.db 30, 255, 10, obj.TYPES.NORMAL
-			.db 210, 0, 10, obj.TYPES.NORMAL
+			.db 210, 255, 10, obj.TYPES.NORMAL
 			.db 120, 0, 10, obj.TYPES.NORMAL
+			.db 30, 0, 10, obj.TYPES.NORMAL
 		.3_4:
 			.db 80
 			.db 52, 88, 0, obj.TYPES.UPRIGHT
@@ -94,8 +94,8 @@ scenarios_easy:
 		.3_5:
 			.db 25
 			.db 52, 88, 1, obj.TYPES.NORMAL
-			.db 52, 120, 0, obj.TYPES.DOWNRIGHT
-			.db 200, 0, 1, obj.TYPES.NORMAL
+			.db 200, 120, 1, obj.TYPES.NORMAL
+			.db 52, 0, 0, obj.TYPES.DOWNRIGHT
 	.4:
 		.db (.4_addrsend - .4_addrs) / 2
 		.4_addrs:
