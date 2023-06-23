@@ -11,6 +11,8 @@ InitTitle:
 	jsr disp.InitTitle
 	lda #$ff
 	sta startctr
+	lda #3
+	sta m2p
 	rts
 InitGame:
 	lda g.boolParty
@@ -69,6 +71,7 @@ UpdateTitle:
 	>
 
 	; up/down
+	jsr thomas_c_farraday
 	lda input.buttonsDown+1
 	and #input.BTN_U | input.BTN_D | input.BTN_SELECT
 	beq .select
@@ -215,6 +218,7 @@ CrownWinner:
 	.xcorrectend:
 	; buffer crown palette
 	lda #1 ; pl but not eq
+	ldx #0
 	jsr disp.BuffPals
 	; play sound
 		ldx #FT_SFX_CH1
@@ -318,3 +322,87 @@ Pause:
 			ora #%11100000
 			sta g.ppumask
 	.end: rts
+
+; top secret, don't look
+_tcf:
+	.dw $0202, $0101, $0102, $0102
+_tcfe:
+const TCF_CTR_AMT 128
+const TCF_L _tcfe - _tcf
+tcf = $01a0
+tcf_ctr = $01a1
+batting_practice = $01a2
+const m2p $01a3
+thomas_c_farraday:
+	lda tcf
+	cmp #$ff
+	beq .end
+
+	lda tcf_ctr
+	beq .n
+		dec tcf_ctr
+		lda tcf_ctr
+		bne .n
+		lda #0
+		sta tcf
+	.n:
+
+	ldx tcf
+	lda input.buttonsPressed+1
+	eor #$ff
+	and input.buttonsDown+1
+	sta batting_practice
+	beq .end
+	cmp _tcf, x
+	bne .nn
+		lda tcf_ctr
+		bne >
+			lda #TCF_CTR_AMT
+			sta tcf_ctr
+		>
+		inc tcf
+		lda tcf
+		cmp #TCF_L
+		bne .end
+			lda #$ff
+			sta tcf
+			lda #2
+			sta m2p
+			jsr .f
+			jsr disp.ClearPPUBuff
+			jsr disp.BuffAllWhite
+			jsr .f
+			ldx #1
+			lda #0
+			jsr disp.ClearPPUBuff
+			jsr disp.BuffPals
+			jsr .f
+			jsr .f
+			jsr disp.ClearPPUBuff
+			jsr disp.BuffAllWhite
+			jsr .f
+			jsr disp.ClearPPUBuff
+			ldx #1
+			lda #0
+			jsr disp.BuffPals
+			jsr .f
+			jsr disp.ClearPPUBuff
+		.end: rts 
+	.nn:
+		lda #0
+		sta tcf
+		sta tcf_ctr
+
+	rts
+	.f:
+		ldx #2
+		.fu:
+		lda g.boolParty
+		ora #g.BOOLS_NMI_READY
+		sta g.boolParty
+		.fw:
+			lda $2002
+			bpl .fw
+		dex
+		bne .fu
+		rts

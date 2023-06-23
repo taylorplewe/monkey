@@ -1845,6 +1845,7 @@ d1SD_deathSq:
 	bne .b2
 		pha
 		lda #$ff 
+		ldx #0
 		jsr d1BuffPals 
 		pla
 	.b2:
@@ -1865,6 +1866,7 @@ d1SD_deathSq:
 	bcc .b3
 		bne .end
 		lda #0
+		tax
 		jmp d1BuffPals
 	.b3:
 	and #%11111100 
@@ -1942,6 +1944,19 @@ d1BuffAllWhite:
 	rts
 d1BuffPals:
 	pha
+	cpx #0
+	bne .titleaddr
+		lda #LOW(gamepals)
+		sta <d1BuffPalsp0
+		lda #HIGH(gamepals)
+		sta <d1BuffPalsp0+1
+		bne .addrend 
+	.titleaddr:
+		lda #LOW(titlepals)
+		sta <d1BuffPalsp0
+		lda #HIGH(titlepals)
+		sta <d1BuffPalsp0+1
+	.addrend:
 	ldx <d1b0
 		lda #32
 		sta d1p0, x
@@ -1954,7 +1969,7 @@ d1BuffPals:
 		inx
 	ldy #0
 	.loop:
-		lda gamepals, y
+		lda [d1BuffPalsp0], y
 		sta d1p0, x
 		inx
 		iny
@@ -2024,7 +2039,7 @@ d1SD_monkey:
 			lda #0
 			beq .arrowpalst
 		.arrowpal2:
-			lda #2
+			lda c4m0
 		.arrowpalst:
 		sta o2, y
 		lda <m8x0, x
@@ -2232,7 +2247,7 @@ d1SD_monkeys:
 		rts
 	.b0:
 	ldx #2
-	lda #2
+	lda c4m0
 	sta <d1SD_monkeya0
 	jmp d1SD_monkey
 d1SD_monkeyTails:
@@ -2273,7 +2288,7 @@ d1SD_monkeyTails:
 				lda #0
 				beq .palst
 			.pal2:
-				lda #2
+				lda c4m0
 			.palst:
 		ora o2, y
 		sta o2, y
@@ -4307,6 +4322,8 @@ c4InitTitle:
 	jsr d1InitTitle
 	lda #$ff
 	sta <c4s0
+	lda #3
+	sta c4m0
 	rts
 c4InitGame:
 	lda <b10
@@ -4360,6 +4377,7 @@ c4UpdateTitle:
 			txs
 			jmp forever
 	.b1:
+	jsr c4thomas_c_farraday
 	lda <i0b8+1
 	and #i0b4 | i0b5 | i0b2
 	beq .select
@@ -4491,6 +4509,7 @@ c4CrownWinner:
 			sta <m8x0, x
 	.xcorrectend:
 	lda #1 
+	ldx #0
 	jsr d1BuffPals
 		ldx #FT_SFX_CH1
 		lda #v0
@@ -4580,6 +4599,82 @@ c4Pause:
 			ora #%11100000
 			sta <p1
 	.end: rts
+_tcf:
+	.dw $0202, $0101, $0102, $0102
+_tcfe:
+tcf = $01a0
+tcf_ctr = $01a1
+batting_practice = $01a2
+c4thomas_c_farraday:
+	lda tcf
+	cmp #$ff
+	beq .end
+	lda tcf_ctr
+	beq .n
+		dec tcf_ctr
+		lda tcf_ctr
+		bne .n
+		lda #0
+		sta tcf
+	.n:
+	ldx tcf
+	lda <i0b9+1
+	eor #$ff
+	and <i0b8+1
+	sta batting_practice
+	beq .end
+	cmp _tcf, x
+	bne .nn
+		lda tcf_ctr
+		bne .b0
+			lda #c4t4
+			sta tcf_ctr
+		.b0:
+		inc tcf
+		lda tcf
+		cmp #c4t5
+		bne .end
+			lda #$ff
+			sta tcf
+			lda #2
+			sta c4m0
+			jsr .f
+			jsr d1ClearPPUBuff
+			jsr d1BuffAllWhite
+			jsr .f
+			ldx #1
+			lda #0
+			jsr d1ClearPPUBuff
+			jsr d1BuffPals
+			jsr .f
+			jsr .f
+			jsr d1ClearPPUBuff
+			jsr d1BuffAllWhite
+			jsr .f
+			jsr d1ClearPPUBuff
+			ldx #1
+			lda #0
+			jsr d1BuffPals
+			jsr .f
+			jsr d1ClearPPUBuff
+		.end: rts 
+	.nn:
+		lda #0
+		sta tcf
+		sta tcf_ctr
+	rts
+	.f:
+		ldx #2
+		.fu:
+		lda <b10
+		ora #b0
+		sta <b10
+		.fw:
+			lda $2002
+			bpl .fw
+		dex
+		bne .fu
+		rts
 	
 
 FT_BASE_ADR		= $0300	
@@ -6459,6 +6554,8 @@ m8PlayJumpSoundw0 .rs 1
 	.rsset 0
 d1SD_tie_wordx0 .rs 1
 	.rsset 0
+d1BuffPalsp0 .rs 2
+	.rsset 0
 d1SD_scores0 .rs 1
 d1SD_scorex0 .rs 1
 	.rsset 0
@@ -6512,10 +6609,13 @@ g0CreateObjsm0 .rs 1
 g0Generatea0 .rs 2
 	.rsset 8
 b5 = %00010000
+c4t5 = _tcfe- _tcf
 c4c2 = 120 - (16 + 16 + 3)
+c4t4 = 128
 c4t3 = 167 
 c4c5 = 255
 c4c3 = 80
+c4m0 = $01a3
 c4t2 = (240 / 2) - 4
 c4c4 = 157
 m3 = 9

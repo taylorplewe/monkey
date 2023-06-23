@@ -1928,6 +1928,7 @@ SD_deathSq:
 	bne >
 		pha
 		lda #$ff ; buffer explosion palette
+		ldx #0
 		jsr BuffPals ; jsr, rts
 		pla
 	>
@@ -1953,6 +1954,7 @@ SD_deathSq:
 	bcc >
 		bne .end
 		lda #0
+		tax
 		jmp BuffPals
 	>
 	and #%11111100 ; advance anim frame every 2 game frames
@@ -2042,8 +2044,25 @@ BuffAllWhite:
 ;	a - eq -> palette 1 = gray
 ;		mi -> palette 1 = explosion
 ;		pl -> palette 1 = crown
+;	x - eq -> game pals
+;		ne -> title pals
 BuffPals:
+	var [2] paladdr
 	pha
+	cpx #0
+	bne .titleaddr
+	;gameaddr:
+		lda #LOW(gamepals)
+		sta paladdr
+		lda #HIGH(gamepals)
+		sta paladdr+1
+		bne .addrend ; jmp
+	.titleaddr:
+		lda #LOW(titlepals)
+		sta paladdr
+		lda #HIGH(titlepals)
+		sta paladdr+1
+	.addrend:
 	ldx bufflen
 	; info bytes
 		lda #32
@@ -2058,7 +2077,7 @@ BuffPals:
 	; data bytes
 	ldy #0
 	.loop:
-		lda gamepals, y
+		lda [paladdr], y
 		sta PPU_BUFF, x
 		inx
 		iny
@@ -2139,13 +2158,14 @@ SD_monkey:
 		adc #12
 		sta g.OAM_Y, y
 		; attr
-		;  x = 1 -> 0
-		;  x = 2 -> 3
-		dex
-		txa
-		inx
-		cmp #1
-		rol a
+		cpx #2
+		beq .arrowpal2
+		;arrowpal1:
+			lda #0
+			beq .arrowpalst
+		.arrowpal2:
+			lda ctrl.m2p
+		.arrowpalst:
 		sta g.OAM_ATTR, y
 		lda monkey.x, x
 		bmi .arrowl
@@ -2364,7 +2384,7 @@ SD_monkeys:
 		rts
 	>
 	ldx #2
-	lda #3
+	lda ctrl.m2p
 	sta SD_monkey.attr
 	jmp SD_monkey
 
@@ -2408,11 +2428,15 @@ SD_monkeyTails:
 		and #monkey.BOOLS_FACING
 		lsr a
 		sta g.OAM_ATTR, y
-		dex
-		txa
-		inx
-		cmp #1
-		rol a
+			; color
+			cpx #2
+			beq .pal2
+			;pal1:
+				lda #0
+				beq .palst
+			.pal2:
+				lda ctrl.m2p
+			.palst:
 		ora g.OAM_ATTR, y
 		sta g.OAM_ATTR, y
 		pla
