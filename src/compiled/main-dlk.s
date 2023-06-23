@@ -2019,11 +2019,13 @@ d1SD_monkey:
 		clc
 		adc #12
 		sta o0, y
-		dex
-		txa
-		inx
-		cmp #1
-		rol a
+		cpx #2
+		beq .arrowpal2
+			lda #0
+			beq .arrowpalst
+		.arrowpal2:
+			lda #2
+		.arrowpalst:
 		sta o2, y
 		lda <m8x0, x
 		bmi .arrowl
@@ -2230,7 +2232,7 @@ d1SD_monkeys:
 		rts
 	.b0:
 	ldx #2
-	lda #3
+	lda #2
 	sta <d1SD_monkeya0
 	jmp d1SD_monkey
 d1SD_monkeyTails:
@@ -2266,11 +2268,13 @@ d1SD_monkeyTails:
 		and #m8b0
 		lsr a
 		sta o2, y
-		dex
-		txa
-		inx
-		cmp #1
-		rol a
+			cpx #2
+			beq .pal2
+				lda #0
+				beq .palst
+			.pal2:
+				lda #2
+			.palst:
 		ora o2, y
 		sta o2, y
 		pla
@@ -4357,10 +4361,10 @@ c4UpdateTitle:
 			jmp forever
 	.b1:
 	lda <i0b8+1
-	and #i0b4 | i0b5
+	and #i0b4 | i0b5 | i0b2
 	beq .select
 	lda <i0b9+1
-	and #i0b4 | i0b5
+	and #i0b4 | i0b5 | i0b2
 	bne .select
 		lda <b10
 		eor #b6

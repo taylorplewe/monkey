@@ -70,10 +70,10 @@ UpdateTitle:
 
 	; up/down
 	lda input.buttonsDown+1
-	and #input.BTN_U | input.BTN_D
+	and #input.BTN_U | input.BTN_D | input.BTN_SELECT
 	beq .select
 	lda input.buttonsPressed+1
-	and #input.BTN_U | input.BTN_D
+	and #input.BTN_U | input.BTN_D | input.BTN_SELECT
 	bne .select
 		lda g.boolParty
 		eor #g.BOOLS_MULTIPLAYER
