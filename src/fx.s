@@ -171,6 +171,11 @@ CreateBounce:
 	adc #2
 	sec
 	sbc BOUNCE_SEGSDOWN, y
+	beq .one
+	bcs .oneend
+		.one:
+		lda #1
+	.oneend:
 	sta BOUNCE_SEGSDOWN, y
 	lda #1
 	sta BOUNCE_FRAMECTR, y

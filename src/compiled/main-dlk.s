@@ -4645,7 +4645,6 @@ c4Peek:
 	bne .end
 	lda #p0
 	ldx #FT_SFX_CH3
-	jsr f3FamiToneSfxPlay
 	.end: rts
 _tcf:
 	.dw $0202, $0101, $0102, $0102
@@ -5751,6 +5750,11 @@ f4CreateBounce:
 	adc #2
 	sec
 	sbc f4b2, y
+	beq .one
+	bcs .oneend
+		.one:
+		lda #1
+	.oneend:
 	sta f4b2, y
 	lda #1
 	sta f4b3, y
