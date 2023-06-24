@@ -15,6 +15,7 @@ reset:
 			sta <$00, x
 			sta $0100, x
 			sta $0300, x
+			sta $0400, x
 			inx
 			bne .zeroLoop
 		lda #$ff 
@@ -100,6 +101,8 @@ forever:
 	lda <i0b8
 	and #i0b2
 	beq .b3
+		jsr d1IncreaseScore
+		jsr c4IncreaseHexScore
 	.b3:
 	.pausedend:
 	jsr f2FamiToneUpdate
@@ -226,6 +229,8 @@ d1InitGame:
 	sta <d1s1
 	sta <d1s2
 	sta <d1s0
+	sta d1s5
+	jsr d1UpdateBasePals
 	lda #$ff
 	sta <d1s2 + 1
 	sta <d1s2 + 2
@@ -245,6 +250,8 @@ d1InitTitle:
 	lda #HIGH(titletiles)
 	sta <d1DrawNTTilesAndAttrsd0+1
 	jsr d1DrawNTTilesAndAttrs
+	lda #$ff
+	jsr d1UpdateBasePals
 	rts
 d1UpdateTitle:
 	lda #d1s3
@@ -556,6 +563,27 @@ d1ClearOAM:
 		dex
 		bne .loop
 	stx <d1o3
+	rts
+d1UpdateBasePals:
+	bne .titlepals
+		lda #LOW(gamepals)
+		sta <d1UpdateBasePalsa0
+		lda #HIGH(gamepals)
+		sta <d1UpdateBasePalsa0+1
+		bne .setend 
+	.titlepals:
+		lda #LOW(titlepals)
+		sta <d1UpdateBasePalsa0
+		lda #HIGH(titlepals)
+		sta <d1UpdateBasePalsa0+1
+	.setend:
+	ldy #32
+	.loop:
+		dey
+		lda [d1UpdateBasePalsa0], y
+		sta d1b0, y
+		cpy #0
+		bne .loop
 	rts
 d1SoftDrawObjs:
 		lda <d1a0
@@ -1923,7 +1951,7 @@ d1SD_deathSq:
 	stx <d1o3
 	.end: rts
 d1BuffAllWhite:
-	ldx <d1b0
+	ldx <d1b1
 		lda #32
 		sta d1p0, x
 		tay
@@ -1940,24 +1968,12 @@ d1BuffAllWhite:
 		inx
 		dey
 		bne .loop
-	stx <d1b0
+	stx <d1b1
+	stx $01a6
 	rts
-d1BuffPals:
+d1BuffPals: 
 	pha
-	cpx #0
-	bne .titleaddr
-		lda #LOW(gamepals)
-		sta <d1BuffPalsp0
-		lda #HIGH(gamepals)
-		sta <d1BuffPalsp0+1
-		bne .addrend 
-	.titleaddr:
-		lda #LOW(titlepals)
-		sta <d1BuffPalsp0
-		lda #HIGH(titlepals)
-		sta <d1BuffPalsp0+1
-	.addrend:
-	ldx <d1b0
+	ldx <d1b1
 		lda #32
 		sta d1p0, x
 		inx
@@ -1969,7 +1985,7 @@ d1BuffPals:
 		inx
 	ldy #0
 	.loop:
-		lda [d1BuffPalsp0], y
+		lda d1b0, y
 		sta d1p0, x
 		inx
 		iny
@@ -1984,8 +2000,7 @@ d1BuffPals:
 		sta d1p0-10, x
 		lda #$20
 		sta d1p0-9, x
-		stx <d1b0
-		rts
+		bne .end 
 	.crown:
 		lda #$0d
 		sta d1p0-11, x
@@ -1993,11 +2008,30 @@ d1BuffPals:
 		sta d1p0-10, x
 		lda #$28
 		sta d1p0-9, x
-		stx <d1b0
-		rts
+	.end:
+	stx <d1b1
+	rts
+d1sky_cols:
+	.db $31, $32, $33, $34, $35, $36, $26
+d1sky_cols_end:
+d1sky_col_levels:
+	.db 10,  35,  80,  120, 160, 200, 240
+d1UpdateSkyColor:
+	ldx d1s5
+	cpx #d1n1
+	bcs .end
+	lda <c4h0
+	cmp d1sky_col_levels, x
+	bne .end
+	ldx d1s5
+	inc d1s5
+	lda d1sky_cols, x
+	sta d1b0+$10
+	lda #0
+	jmp d1BuffPals
 	.end: rts
 d1ClearPPUBuff:
-	ldy <d1b0
+	ldy <d1b1
 	beq .end
 	lda #0
 	.loop:
@@ -2005,7 +2039,7 @@ d1ClearPPUBuff:
 		sta d1p0, y
 		cpy #0
 		bne .loop
-	sty <d1b0
+	sty <d1b1
 	.end: rts
 d1mmonkeytiles:
 	.db $00, $02, $04, $06, $08, $0a, 0, 0 
@@ -2311,7 +2345,7 @@ d1SD_monkeyTails:
 d1FadeToWhite:
 	ldy #0
 	.writeloop:
-		lda [d1FadeToWhitea0], y
+		lda d1b0, y
 		sta d1p0+3, y
 		iny
 		cpy #32
@@ -2366,33 +2400,21 @@ d1FadeToWhite:
 			ldy #0
 			beq .fadeloop 
 	.b2:
-	lda <b10
-	ora #b0
-	sta <b10
 	ldx #2
-	.waitloop1:
-		txa
-		pha
-		jsr f2FamiToneUpdate
-		pla
-		tax
-		.waitwait1:
-			lda $2002
-			bpl .waitwait1
-		dex
-		bne .waitloop1
+	jsr c3WaitNumFrames
 	rts
-d1WhiteToGame:
+d1FadeToBase:
 	ldx #0
 	ldy #4
 	.writeloop:
-		lda gamepals, x
+		lda d1b0, x
 		and #$0f
 		ora #$30
 		sta d1p0+3, x
 		inx
 		cpx #32
 		bne .writeloop
+		stx <d1b1
 		beq .2framer
 	.fadeloop:
 		lda d1p0+3, x
@@ -2410,26 +2432,9 @@ d1WhiteToGame:
 	dey
 	beq .b1
 		.2framer:
-		lda <b10
-		ora #b0
-		sta <b10
 		ldx #2
-		.waitloop:
-			txa
-			pha
-			tya
-			pha
-			jsr f2FamiToneUpdate
-			pla
-			tay
-			pla
-			tax
-			.waitwait:
-				lda $2002
-				bpl .waitwait
-			dex
-			bne .waitloop
-			beq .fadeloop
+		jsr c3WaitNumFrames
+		jmp .fadeloop
 	.b1:
 	rts
 d1tiewordtiles:
@@ -3531,7 +3536,26 @@ c3ModRandomNum:
 		sec
 		sbc <c3ModRandomNumm0
 		jmp .modloop
-		
+c3WaitNumFrames:
+	lda <b10
+	ora #b0
+	sta <b10
+	.loop:
+		txa
+		pha
+		tya
+		pha
+		jsr f2FamiToneUpdate
+		pla
+		tay
+		pla
+		tax
+		.wait:
+			lda $2002
+			bpl .wait
+		dex
+		bne .loop
+	rts
 	
 
 i0Read:
@@ -4367,13 +4391,9 @@ c4UpdateTitle:
 	beq .b1
 		dec <c4s0
 		bne c4TitleSpr0
-		lda #LOW(titlepals)
-		sta <d1FadeToWhitea0
-		lda #HIGH(titlepals)
-		sta <d1FadeToWhitea0+1
 		jsr d1FadeToWhite
 		jsr c4InitGame
-		jsr d1WhiteToGame
+		jsr d1FadeToBase
 		.getouttahere:
 			lda $2002
 			bpl .getouttahere
@@ -4468,13 +4488,9 @@ c4UpdateGame:
 		bne c4ResetGame 
 	.end: rts
 c4ResetGame:
-	lda #LOW(gamepals)
-	sta <d1FadeToWhitea0
-	lda #HIGH(gamepals)
-	sta <d1FadeToWhitea0+1
 	jsr d1FadeToWhite
 	jsr c4InitGame
-	jmp d1WhiteToGame
+	jmp d1FadeToBase
 c4CrownWinner:
 	lda <b10
 	and #b6
@@ -4544,6 +4560,7 @@ c4IncreaseHexScore:
 	.b0:
 	lda <c4h0+1
 	bne .end
+	jsr d1UpdateSkyColor
 	lda <c4h0
 	cmp #c4c3
 	beq .chase1
@@ -4643,24 +4660,19 @@ c4thomas_c_farraday:
 			lda #2
 			sta c4m0
 			jsr .f
-			jsr d1ClearPPUBuff
 			jsr d1BuffAllWhite
 			jsr .f
 			ldx #1
 			lda #0
-			jsr d1ClearPPUBuff
 			jsr d1BuffPals
 			jsr .f
 			jsr .f
-			jsr d1ClearPPUBuff
 			jsr d1BuffAllWhite
 			jsr .f
-			jsr d1ClearPPUBuff
 			ldx #1
 			lda #0
 			jsr d1BuffPals
 			jsr .f
-			jsr d1ClearPPUBuff
 		.end: rts 
 	.nn:
 		lda #0
@@ -4669,16 +4681,8 @@ c4thomas_c_farraday:
 	rts
 	.f:
 		ldx #2
-		.fu:
-		lda <b10
-		ora #b0
-		sta <b10
-		.fw:
-			lda $2002
-			bpl .fw
-		dex
-		bne .fu
-		rts
+		jsr c3WaitNumFrames
+		jmp d1ClearPPUBuff
 	
 
 FT_BASE_ADR		= $0300	
@@ -6147,7 +6151,7 @@ s4scenarios_easy:
 			.db 140, 50, 0, o4c0
 		.5_3:
 			.db 40
-			.db 20, 40, 0, o4s6
+			.db 20, 80, 0, o4s6
 			.db 168, 44, 1, o4n1
 			.db 52, 118, 4, o4n1
 			.db 168, 70, 1, o4n1
@@ -6469,14 +6473,14 @@ titlepals:
 	.db $21, 0, 0, 0
 	.db $21, 0, 0, 0
 gamepals:
-	.db $26, $0c, $1b, $29
-	.db $26, 0, 0, 0
-	.db $26, 0, 0, 0
-	.db $26, 0, 0, 0
-	.db $26, $0d, $17, $27
-	.db $26, $0d, $00, $10
-	.db $26, $0d, $21, $20
-	.db $26, $0d, $16, $37
+	.db $21, $0c, $1b, $29
+	.db $21, 0, 0, 0
+	.db $21, 0, 0, 0
+	.db $21, 0, 0, 0
+	.db $21, $0d, $17, $27
+	.db $21, $0d, $00, $10
+	.db $21, $0d, $21, $20
+	.db $21, $0d, $16, $37
 sdaddrs:
 	.dw d1SD_norm			
 	.dw d1SD_norm			
@@ -6526,6 +6530,8 @@ sdaddrs:
 d1SetPalettesp0 .rs 2
 	.rsset 0
 d1DrawNTTilesAndAttrsd0 .rs 2
+	.rsset 0
+d1UpdateBasePalsa0 .rs 2
 	.rsset 2
 resetm2 .rs 1
 resetm1 .rs 1
@@ -6558,8 +6564,6 @@ m8PlayJumpSoundw0 .rs 1
 	.rsset 0
 d1SD_tie_wordx0 .rs 1
 	.rsset 0
-d1BuffPalsp0 .rs 2
-	.rsset 0
 d1SD_scores0 .rs 1
 d1SD_scorex0 .rs 1
 	.rsset 0
@@ -6580,8 +6584,6 @@ d1SoftDrawObjsc0 .rs 1
 	.rsset 0
 d1SD_cloudx0 .rs 1
 d1SD_cloudy0 .rs 1
-	.rsset 0
-d1FadeToWhitea0 .rs 2
 	.rsset 0
 d1SD_monkeyWordx0 .rs 1
 d1SD_monkeyWordl0 .rs 1
@@ -6753,12 +6755,15 @@ d1c5 = 32
 d1v0 = %10000000
 d1t1 = 114
 d1o5 = $4d
+d1s5 = $01c0
 d1t2 = $50
 d1w0 = $20
 d1t5 = $6c| 1
 d1o4 = 94
 d1f0 = 120
+d1n1 = d1sky_cols_end- d1sky_cols
 d1h0 = %01000000
+d1b0 = $0400
 d1y0 = 16
 d1c2 = $5a| 1
 d1t8 = m8w0- 3
@@ -6832,7 +6837,7 @@ d1d0 .rs 1
 d1e0 .rs 1
 d1u0 .rs 1
 d1m2 .rs 1
-d1b0 .rs 1
+d1b1 .rs 1
 d1f2 .rs 1
 d1t4 .rs 2
 d1n0 .rs 1

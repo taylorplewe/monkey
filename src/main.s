@@ -70,7 +70,7 @@ reset:
 			sta <$00, x
 			sta $0100, x
 			sta $0300, x
-			; sta $0400, x
+			sta $0400, x
 			; sta $0500, x
 			; sta $0600, x
 			; sta $0700, x
@@ -309,16 +309,16 @@ titlepals:
 	.db $21, 0, 0, 0
 gamepals:
 	; bg
-	.db $26, $0c, $1b, $29
-	.db $26, 0, 0, 0
-	.db $26, 0, 0, 0
-	.db $26, 0, 0, 0
+	.db $21, $0c, $1b, $29
+	.db $21, 0, 0, 0
+	.db $21, 0, 0, 0
+	.db $21, 0, 0, 0
 	; spr
-	.db $26, $0d, $17, $27
-	.db $26, $0d, $00, $10
-	.db $26, $0d, $21, $20
-	; .db $26, $0d, $16, $20
-	.db $26, $0d, $16, $37
+	.db $21, $0d, $17, $27
+	.db $21, $0d, $00, $10
+	.db $21, $0d, $21, $20
+	; .db $21, $0d, $16, $20
+	.db $21, $0d, $16, $37
 
 ; a table of which method should be invoked when drawing each particular wall type
 sdaddrs:

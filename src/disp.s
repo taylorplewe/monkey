@@ -10,6 +10,8 @@ const H_FLIP %01000000
 
 const PPU_BUFF $0100
 
+const BASE_PALS $0400
+
 var [1] oamInd
 var [1] scroll
 var [1] xscroll ; (for shaking on death)
@@ -94,6 +96,8 @@ InitGame:
 	sta scrollForNextGen
 	sta score
 	sta scroll
+	sta sky_col_ind
+	jsr UpdateBasePals
 	lda #$ff
 	sta score + 1
 	sta score + 2
@@ -116,6 +120,9 @@ InitTitle:
 	lda #HIGH(g.titletiles)
 	sta DrawNTTilesAndAttrs.dataaddr+1
 	jsr DrawNTTilesAndAttrs
+
+	lda #$ff
+	jsr UpdateBasePals
 
 	rts
 
@@ -491,6 +498,35 @@ ClearOAM:
 		dex
 		bne .loop
 	stx oamInd
+	rts
+
+; params:
+;	a - eq -> gamepals
+;		ne -> titlepals
+UpdateBasePals:
+	var [2] addr
+	bne .titlepals
+	;gamepals:
+		lda #LOW(g.gamepals)
+		sta addr
+		lda #HIGH(g.gamepals)
+		sta addr+1
+		bne .setend ; jmp
+	.titlepals:
+		lda #LOW(g.titlepals)
+		sta addr
+		lda #HIGH(g.titlepals)
+		sta addr+1
+	.setend:
+
+	ldy #32
+	.loop:
+		dey
+		lda [addr], y
+		sta BASE_PALS, y
+		cpy #0
+		bne .loop
+
 	rts
 
 SoftDrawObjs:
@@ -2038,31 +2074,15 @@ BuffAllWhite:
 		dey
 		bne .loop
 	stx bufflen
+	stx $01a6
 	rts
 
 ; params:
 ;	a - eq -> palette 1 = gray
 ;		mi -> palette 1 = explosion
 ;		pl -> palette 1 = crown
-;	x - eq -> game pals
-;		ne -> title pals
-BuffPals:
-	var [2] paladdr
+BuffPals: ;lmao
 	pha
-	cpx #0
-	bne .titleaddr
-	;gameaddr:
-		lda #LOW(gamepals)
-		sta paladdr
-		lda #HIGH(gamepals)
-		sta paladdr+1
-		bne .addrend ; jmp
-	.titleaddr:
-		lda #LOW(titlepals)
-		sta paladdr
-		lda #HIGH(titlepals)
-		sta paladdr+1
-	.addrend:
 	ldx bufflen
 	; info bytes
 		lda #32
@@ -2077,7 +2097,7 @@ BuffPals:
 	; data bytes
 	ldy #0
 	.loop:
-		lda [paladdr], y
+		lda BASE_PALS, y
 		sta PPU_BUFF, x
 		inx
 		iny
@@ -2087,25 +2107,47 @@ BuffPals:
 	pla
 	beq .end
 	bpl .crown
-		; PPU_BUFF-11
 		lda #$06
 		sta PPU_BUFF-11, x
 		lda #$38
 		sta PPU_BUFF-10, x
 		lda #$20
 		sta PPU_BUFF-9, x
-		stx bufflen
-		rts
+		bne .end ; jmp
 	.crown:
-		; PPU_BUFF-11
 		lda #$0d
 		sta PPU_BUFF-11, x
 		lda #$18
 		sta PPU_BUFF-10, x
 		lda #$28
 		sta PPU_BUFF-9, x
-		stx bufflen
-		rts
+	.end:
+	stx bufflen
+	rts
+
+sky_cols:
+	.db $31, $32, $33, $34, $35, $36, $26
+sky_cols_end:
+sky_col_levels:
+	.db 9,  29,  59,  89, 138, 174, 199
+const NUM_SKY_COLS sky_cols_end - sky_cols
+const sky_col_ind $01c0
+UpdateSkyColor:
+	; time to change it?
+	ldx sky_col_ind
+	cpx #NUM_SKY_COLS
+	bcs .end
+	lda ctrl.hexscore
+	cmp sky_col_levels, x
+	bne .end
+
+	; yes change it
+	ldx sky_col_ind
+	inc sky_col_ind
+	lda sky_cols, x
+	sta BASE_PALS+$10
+	lda #0
+	jmp BuffPals
 	.end: rts
 
 ClearPPUBuff:
@@ -2458,10 +2500,9 @@ SD_monkeyTails:
 
 const WHITE $20
 FadeToWhite:
-	var [2] addr
 	ldy #0
 	.writeloop:
-		lda [addr], y
+		lda BASE_PALS, y
 		sta PPU_BUFF+3, y
 		iny
 		cpy #32
@@ -2516,34 +2557,24 @@ FadeToWhite:
 			ldy #0
 			beq .fadeloop ; jmp
 	>
-	lda g.boolParty
-	ora #g.BOOLS_NMI_READY
-	sta g.boolParty
+
+	; now wait 2 more frames
 	ldx #2
-	.waitloop1:
-		txa
-		pha
-		jsr ft.FamiToneUpdate
-		pla
-		tax
-		.waitwait1:
-			lda $2002
-			bpl .waitwait1
-		dex
-		bne .waitloop1
+	jsr comm.WaitNumFrames
 	rts
 
-WhiteToGame:
+FadeToBase:
 	ldx #0
 	ldy #4
 	.writeloop:
-		lda gamepals, x
+		lda BASE_PALS, x
 		and #$0f
 		ora #$30
 		sta PPU_BUFF+3, x
 		inx
 		cpx #32
 		bne .writeloop
+		stx bufflen
 		beq .2framer
 	.fadeloop:
 		lda PPU_BUFF+3, x
@@ -2562,26 +2593,9 @@ WhiteToGame:
 	dey
 	beq >
 		.2framer:
-		lda g.boolParty
-		ora #g.BOOLS_NMI_READY
-		sta g.boolParty
 		ldx #2
-		.waitloop:
-			txa
-			pha
-			tya
-			pha
-			jsr ft.FamiToneUpdate
-			pla
-			tay
-			pla
-			tax
-			.waitwait:
-				lda $2002
-				bpl .waitwait
-			dex
-			bne .waitloop
-			beq .fadeloop
+		jsr comm.WaitNumFrames
+		jmp .fadeloop
 	>
 	rts
 

@@ -55,13 +55,9 @@ UpdateTitle:
 	beq >
 		dec startctr
 		bne TitleSpr0
-		lda #LOW(g.titlepals)
-		sta disp.FadeToWhite.addr
-		lda #HIGH(g.titlepals)
-		sta disp.FadeToWhite.addr+1
 		jsr disp.FadeToWhite
 		jsr InitGame
-		jsr disp.WhiteToGame
+		jsr disp.FadeToBase
 		.getouttahere:
 			lda $2002
 			bpl .getouttahere
@@ -169,13 +165,9 @@ UpdateGame:
 
 ResetGame:
 	; fade out, restt everything, fade back in
-	lda #LOW(g.gamepals)
-	sta disp.FadeToWhite.addr
-	lda #HIGH(g.gamepals)
-	sta disp.FadeToWhite.addr+1
 	jsr disp.FadeToWhite
 	jsr InitGame
-	jmp disp.WhiteToGame
+	jmp disp.FadeToBase
 
 CrownWinner:
 	lda g.boolParty
@@ -260,6 +252,7 @@ IncreaseHexScore:
 	>
 	lda hexscore+1
 	bne .end
+	jsr disp.UpdateSkyColor
 	lda hexscore
 	cmp #CHASE_LEVEL_1
 	beq .chase1
@@ -369,24 +362,19 @@ thomas_c_farraday:
 			lda #2
 			sta m2p
 			jsr .f
-			jsr disp.ClearPPUBuff
 			jsr disp.BuffAllWhite
 			jsr .f
 			ldx #1
 			lda #0
-			jsr disp.ClearPPUBuff
 			jsr disp.BuffPals
 			jsr .f
 			jsr .f
-			jsr disp.ClearPPUBuff
 			jsr disp.BuffAllWhite
 			jsr .f
-			jsr disp.ClearPPUBuff
 			ldx #1
 			lda #0
 			jsr disp.BuffPals
 			jsr .f
-			jsr disp.ClearPPUBuff
 		.end: rts 
 	.nn:
 		lda #0
@@ -396,13 +384,5 @@ thomas_c_farraday:
 	rts
 	.f:
 		ldx #2
-		.fu:
-		lda g.boolParty
-		ora #g.BOOLS_NMI_READY
-		sta g.boolParty
-		.fw:
-			lda $2002
-			bpl .fw
-		dex
-		bne .fu
-		rts
+		jsr comm.WaitNumFrames
+		jmp disp.ClearPPUBuff

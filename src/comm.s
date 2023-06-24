@@ -151,4 +151,26 @@ ModRandomNum:
 		sec
 		sbc mod
 		jmp .modloop
-		
+
+; params:
+;	x - number of frames to wait
+WaitNumFrames:
+	lda g.boolParty
+	ora #g.BOOLS_NMI_READY
+	sta g.boolParty
+	.loop:
+		txa
+		pha
+		tya
+		pha
+		jsr ft.FamiToneUpdate
+		pla
+		tay
+		pla
+		tax
+		.wait:
+			lda $2002
+			bpl .wait
+		dex
+		bne .loop
+	rts
