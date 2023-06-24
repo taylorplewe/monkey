@@ -335,9 +335,9 @@ thomas_c_farraday:
 	.n:
 
 	ldx tcf
-	lda input.buttonsPressed+1
+	lda input.buttonsPressed+2
 	eor #$ff
-	and input.buttonsDown+1
+	and input.buttonsDown+2
 	sta batting_practice
 	beq .end
 	cmp _tcf, x

@@ -4638,9 +4638,9 @@ c4thomas_c_farraday:
 		sta tcf
 	.n:
 	ldx tcf
-	lda <i0b9+1
+	lda <i0b9+2
 	eor #$ff
-	and <i0b8+1
+	and <i0b8+2
 	sta batting_practice
 	beq .end
 	cmp _tcf, x
