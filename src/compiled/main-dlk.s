@@ -4471,6 +4471,7 @@ c4TitleSpr0:
 c4UpdateGame:
 	jsr f4UpdateEffects
 	jsr f4UpdateBounces
+	jsr c4Peek
 	lda <c4t1
 	beq .b0
 		jsr c4UpdateTieWord
@@ -4610,6 +4611,35 @@ c4Pause:
 			lda <p1
 			ora #%11100000
 			sta <p1
+	.end: rts
+c4Peek:
+	lda <d1d1
+	bpl .end
+	lda <c4v0
+	bne .end
+	lda <b10
+	and #b6
+	bne .mult
+		lda <i0b8+1
+		and #i0b4
+		beq .end
+		lda <m8y0+1
+		cmp #c4p0
+		bcs .end
+		bcc .act 
+	.mult:
+		lda #i0b4
+		and <i0b8+1
+		and <i0b8+2
+		beq .end
+		lda #c4p0
+		cmp <m8y0+1
+		bcc .end
+		cmp <m8y0+2
+		bcc .end
+	.act:
+	lda #1
+	jsr d1ScrollUp
 	.end: rts
 _tcf:
 	.dw $0202, $0101, $0102, $0102
@@ -6603,6 +6633,7 @@ b5 = %00010000
 c4t5 = _tcfe- _tcf
 c4c2 = 120 - (16 + 16 + 3)
 c4t4 = 128
+c4p0 = $ba
 c4t3 = 167 
 c4c5 = 255
 c4c3 = 80

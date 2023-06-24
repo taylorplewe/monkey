@@ -132,6 +132,7 @@ TitleSpr0:
 UpdateGame:
 	jsr fx.UpdateEffects
 	jsr fx.UpdateBounces
+	jsr Peek
 	; possible update tie word
 	lda tiey
 	beq >
@@ -293,6 +294,39 @@ Pause:
 			lda g.ppumask
 			ora #%11100000
 			sta g.ppumask
+	.end: rts
+
+const PEEKING_MONKEY_Y_MAX $ba
+Peek:
+	lda disp.deathCtr
+	bpl .end
+	lda victorind
+	bne .end
+	lda g.boolParty
+	and #g.BOOLS_MULTIPLAYER
+	bne .mult
+	;sing
+		lda input.buttonsDown+1
+		and #input.BTN_U
+		beq .end
+		lda monkey.y+1
+		cmp #PEEKING_MONKEY_Y_MAX
+		bcs .end
+		bcc .act ; jmp
+	.mult:
+		lda #input.BTN_U
+		and input.buttonsDown+1
+		and input.buttonsDown+2
+		beq .end
+		lda #PEEKING_MONKEY_Y_MAX
+		cmp monkey.y+1
+		bcc .end
+		cmp monkey.y+2
+		bcc .end
+	.act:
+	lda #1
+	jsr disp.ScrollUp
+
 	.end: rts
 
 ; top secret, don't look
