@@ -37,7 +37,6 @@ idset SOUNDS {
 	FALL
 	VICTORY
 	FLIP_MONKEY
-	PEEK
 }
 
 var [1] boolParty
