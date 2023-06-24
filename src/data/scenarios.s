@@ -222,7 +222,7 @@ scenarios_easy:
 	.8:
 		.db (.8_addrsend - .8_addrs) / 2
 		.8_addrs:
-			.dw .8_1, .8_2, .8_3
+			.dw .8_4
 		.8_addrsend:
 		.8_1:
 			.db 80
@@ -254,6 +254,16 @@ scenarios_easy:
 			.db 16, 0, 1, obj.TYPES.SPDDOWN
 			.db 16, 116, 1, obj.TYPES.SPDDOWN
 			.db 128, 58, 1, obj.TYPES.SPDDOWN
+		.8_4:
+			.db 60
+			.db 48, 88, 0, obj.TYPES.NORMAL
+			.db 56, 0, 0, obj.TYPES.THORN_R
+			.db 148, 0, 0, obj.TYPES.NORMAL
+			.db 140, 0, 0, obj.TYPES.THORN_L
+			.db 48, 100, 0, obj.TYPES.NORMAL
+			.db 40, 0, 0, obj.TYPES.THORN_L
+			.db 148, 0, 0, obj.TYPES.NORMAL
+			.db 156, 0, 0, obj.TYPES.THORN_R
 
 scenarios_hard:
 	; organized by # objs
