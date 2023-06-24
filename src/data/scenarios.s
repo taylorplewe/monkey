@@ -147,7 +147,7 @@ scenarios_easy:
 		.5_3:
 			.db 40
 			.db 20, 80, 0, obj.TYPES.SPIKE_UR
-			.db 168, 44, 1, obj.TYPES.NORMAL
+			.db 168, 44, 3, obj.TYPES.NORMAL
 			.db 52, 118, 4, obj.TYPES.NORMAL
 			.db 168, 70, 1, obj.TYPES.NORMAL
 			.db 20, 20, 0, obj.TYPES.SPIKE_DR

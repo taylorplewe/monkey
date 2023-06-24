@@ -2015,7 +2015,7 @@ d1sky_cols:
 	.db $31, $32, $33, $34, $35, $36, $26
 d1sky_cols_end:
 d1sky_col_levels:
-	.db 10,  35,  80,  120, 160, 200, 240
+	.db 9,  29,  59,  89, 138, 174, 199
 d1UpdateSkyColor:
 	ldx d1s5
 	cpx #d1n1
@@ -4566,8 +4566,6 @@ c4IncreaseHexScore:
 	beq .chase1
 	cmp #c4c4
 	beq .chase2
-	cmp #c4c5
-	beq .chase4
 	cmp #c4t3
 	beq .timerspdup
 	rts
@@ -4577,10 +4575,6 @@ c4IncreaseHexScore:
 		.end: rts
 	.chase2:
 		lda #2
-		sta <c4c0
-		rts
-	.chase4:
-		lda #4
 		sta <c4c0
 		rts
 	.timerspdup:
@@ -6152,7 +6146,7 @@ s4scenarios_easy:
 		.5_3:
 			.db 40
 			.db 20, 80, 0, o4s6
-			.db 168, 44, 1, o4n1
+			.db 168, 44, 3, o4n1
 			.db 52, 118, 4, o4n1
 			.db 168, 70, 1, o4n1
 			.db 20, 20, 0, o4s4

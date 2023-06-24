@@ -258,8 +258,6 @@ IncreaseHexScore:
 	beq .chase1
 	cmp #CHASE_LEVEL_2
 	beq .chase2
-	cmp #CHASE_LEVEL_4
-	beq .chase4
 	cmp #TIMER_WALL_CTR_DEC_LVL
 	beq .timerspdup
 	rts
@@ -269,10 +267,6 @@ IncreaseHexScore:
 		.end: rts
 	.chase2:
 		lda #2
-		sta chasespeed
-		rts
-	.chase4:
-		lda #4
 		sta chasespeed
 		rts
 	.timerspdup:
