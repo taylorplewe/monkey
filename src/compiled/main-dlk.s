@@ -44,10 +44,10 @@ reset:
 	sta <b9
 	lda #%10000000
 	sta $2000
-	sta <p1
+	sta <p0
 	lda #%00011110
 	sta $2001
-	sta <p2
+	sta <p1
 	ldx #2
 	.sync2:
 		lda $2002
@@ -66,7 +66,7 @@ forever:
 	and #b7
 	bne .title
 			jsr c4Pause
-			lda <p3
+			lda <p2
 			bne .pausedend
 		lda <c4v0
 		beq .b1
@@ -161,9 +161,9 @@ nmi:
 	lda <d1s0
 	sta $2005
 	.recal:
-	lda <p1
+	lda <p0
 	sta $2000
-	lda <p2
+	lda <p1
 	sta $2001
 	pla
 	tax
@@ -479,9 +479,9 @@ d1ScrollUp:
 				sec
 				sbc #16
 				sta <d1s0
-				lda <p1
+				lda <p0
 				eor #%00000010
-				sta <p1
+				sta <p0
 				jsr d1IncreaseScore
 				jsr c4IncreaseHexScore
 		.b0:
@@ -4370,8 +4370,8 @@ c4InitGame:
 	and #b7 ^ $ff
 	sta <b9
 	lda #0
+	sta <p0
 	sta <p1
-	sta <p2
 	sta $2000
 	sta $2001
 	sta <c4v0
@@ -4387,10 +4387,10 @@ c4InitGame:
 	jsr d1Update
 	lda #%10100000
 	sta $2000
-	sta <p1
+	sta <p0
 	lda #%00011110
 	sta $2001
-	sta <p2
+	sta <p1
 	rts
 c4UpdateTitle:
 	lda <c2
@@ -4451,7 +4451,7 @@ c4TitleSpr0:
 	sta $2005
 	lda #0
 	sta $2005
-	lda <p1
+	lda <p0
 	sta $2000
 	ldx #0
 	.spr0wait3:
@@ -4465,7 +4465,7 @@ c4TitleSpr0:
 		bne .spr0wait3
 	stx $2005
 	stx $2005
-	lda <p1
+	lda <p0
 	sta $2000
 	.end: rts
 c4UpdateGame:
@@ -4597,20 +4597,20 @@ c4Pause:
 	and #i0b3
 	beq .end
 		.act:
-		lda <p3
+		lda <p2
 		beq .pause
 			lda #0
-			sta <p3
-			lda <p2
-			and #%00011111
 			sta <p2
+			lda <p1
+			and #%00011111
+			sta <p1
 			rts
 		.pause:
 			lda #1
-			sta <p3
-			lda <p2
-			ora #%11100000
 			sta <p2
+			lda <p1
+			ora #%11100000
+			sta <p1
 	.end: rts
 c4Peek:
 	lda <d1d1
@@ -4643,8 +4643,6 @@ c4Peek:
 	lda <i0b9+1
 	and #i0b4
 	bne .end
-	lda #p0
-	ldx #FT_SFX_CH3
 	.end: rts
 _tcf:
 	.dw $0202, $0101, $0102, $0102
@@ -5814,7 +5812,6 @@ sounds:
 	.dw .sfx_ntsc_fall
 	.dw .sfx_ntsc_victory
 	.dw .sfx_ntsc_flip_monkey
-	.dw .sfx_ntsc_peek
 .sfx_ntsc_bounce:
 	.db $82,$01,$81,$70,$80,$38,$85,$03,$84,$79,$83,$38,$87,$eb,$88,$03
 	.db $86,$8f,$89,$f0,$01,$81,$64,$84,$6a,$87,$de,$01,$81,$58,$80,$37
@@ -5917,13 +5914,6 @@ sounds:
 	.db $7e,$05,$84,$5e,$05,$00
 .sfx_ntsc_flip_monkey:
 	.db $8a,$06,$01,$89,$31,$02,$89,$32,$01,$89,$33,$01,$00
-.sfx_ntsc_peek:
-	.db $87,$94,$88,$00,$86,$8f,$89,$f0,$01,$87,$93,$01,$87,$91,$01,$87
-	.db $90,$01,$87,$8e,$01,$87,$8d,$01,$87,$8b,$01,$87,$8a,$01,$87,$88
-	.db $01,$87,$87,$01,$87,$85,$01,$87,$84,$01,$87,$82,$01,$87,$81,$01
-	.db $87,$7f,$01,$87,$7e,$01,$87,$7c,$01,$87,$7b,$01,$87,$79,$01,$87
-	.db $78,$01,$87,$76,$01,$87,$75,$01,$87,$73,$01,$87,$72,$01,$87,$70
-	.db $01,$87,$6f,$01,$87,$6d,$01,$87,$6c,$01,$87,$6a,$02,$00
 
 titletiles:
 	
@@ -6196,7 +6186,7 @@ s4scenarios_easy:
 	.6:
 		.db (.6_addrsend - .6_addrs) / 2
 		.6_addrs:
-			.dw .6_1, .6_2, .6_3
+			.dw .6_1, .6_2, .6_3, .6_4
 		.6_addrsend:
 		.6_1:
 			.db 40
@@ -6222,6 +6212,14 @@ s4scenarios_easy:
 			.db 132, 0, 0, o4n1
 			.db 220, 32, 0, o4t4
 			.db 212, 0, 0, o4n1
+		.6_4:
+			.db 48
+			.db 60, 88, 0, o4u2
+			.db 116, 120, 0, o4t1
+			.db 190, 120, 0, o4d1
+			.db 116, 20, 0, o4t1
+			.db 60, 20, 0, o4u2
+			.db 116, 80, 0, o4t1
 	.7:
 		.db (.7_addrsend - .7_addrs) / 2
 		.7_addrs:
@@ -6679,7 +6677,6 @@ m1 = 7
 m6 = 12
 s0 = 5
 m2 = 8
-p0 = 19
 c0 = 1
 b7 = %01000000
 m8b2 = %00000010
@@ -6822,11 +6819,11 @@ g0h0 = 50
 b2 = %00000010
 o2 = o0+ 2
 b6 = %00100000
-p2 .rs 1
-b9 .rs 1
 p1 .rs 1
+b9 .rs 1
+p0 .rs 1
 c2 .rs 1
-p3 .rs 1
+p2 .rs 1
 s2 .rs 2
 s3 .rs 2
 c4t0 .rs 1

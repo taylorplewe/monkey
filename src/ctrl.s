@@ -330,11 +330,6 @@ Peek:
 	lda input.buttonsPrev+1
 	and #input.BTN_U
 	bne .end
-	; play sound
-	lda #g.SOUNDS.PEEK
-	ldx #FT_SFX_CH3
-	;jsr ft.FamiToneSfxPlay
-	; I didn't like any of the sounds I was trying...
 
 	.end: rts
 

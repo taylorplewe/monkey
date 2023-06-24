@@ -23,7 +23,6 @@ sounds:
 	.dw .sfx_ntsc_fall
 	.dw .sfx_ntsc_victory
 	.dw .sfx_ntsc_flip_monkey
-	.dw .sfx_ntsc_peek
 
 .sfx_ntsc_bounce:
 	.db $82,$01,$81,$70,$80,$38,$85,$03,$84,$79,$83,$38,$87,$eb,$88,$03
