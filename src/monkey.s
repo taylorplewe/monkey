@@ -683,6 +683,9 @@ Flip:
 
 FlipAction:
 	; banana
+		lda #g.SOUNDS.FLIP_MONKEY
+		ldx #FT_SFX_CH3
+		jsr ft.FamiToneSfxPlay
 	ldx wallInd
 	lda y
 	sta targYPos

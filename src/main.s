@@ -37,6 +37,7 @@ idset SOUNDS {
 	FALL
 	BACKFLIP
 	VICTORY
+	FLIP_MONKEY
 }
 
 var [1] boolParty
@@ -52,15 +53,10 @@ var [1] paused ; added last minute lmao
 	.org $8000
 
 reset:
-	var [1] mx
-	var [1] my
-	var [1] mt
 	; disable graphics and stuff
 	ldx #0
 	stx $2000
 	stx $2001
-	stx ppuctrl
-	stx ppumask
 
 	; reset all RAM
 		; not every NES (or NES emulator) is created equal;
@@ -93,6 +89,14 @@ reset:
 	lda $6001
 	sta seed+1
 
+	; wait for PPU and CPU to get synced up
+	ldx #2
+	.sync1:
+		lda $2002
+		bpl .sync1
+		dex
+		bne .sync1
+
 	lda #$ff
 	jsr ft.FamiToneInit
 	ldx #LOW(sounds)
@@ -115,11 +119,11 @@ reset:
 
 	; wait for PPU and CPU to get synced up
 	ldx #2
-	.sync:
+	.sync2:
 		lda $2002
-		bpl .sync
+		bpl .sync2
 		dex
-		bne .sync
+		bne .sync2
 forever:
 	inc counter
 	inc seed

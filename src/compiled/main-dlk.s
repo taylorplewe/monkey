@@ -8,8 +8,6 @@ reset:
 	ldx #0
 	stx $2000
 	stx $2001
-	stx <p0
-	stx <p1
 		txa
 		.zeroLoop:
 			sta <$00, x
@@ -29,11 +27,17 @@ reset:
 	sta <s2
 	lda $6001
 	sta <s2+1
+	ldx #2
+	.sync1:
+		lda $2002
+		bpl .sync1
+		dex
+		bne .sync1
 	lda #$ff
-	jsr f2FamiToneInit
+	jsr f3FamiToneInit
 	ldx #LOW(sounds)
 	ldy #HIGH(sounds)
-	jsr f2FamiToneSfxInit
+	jsr f3FamiToneSfxInit
 	jsr c4InitTitle
 	lda <b10
 	ora #b7
@@ -45,11 +49,11 @@ reset:
 	sta $2001
 	sta <p1
 	ldx #2
-	.sync:
+	.sync2:
 		lda $2002
-		bpl .sync
+		bpl .sync2
 		dex
-		bne .sync
+		bne .sync2
 forever:
 	inc <c2
 	inc <s2
@@ -83,12 +87,12 @@ forever:
 			beq .flip
 				ldx #FT_SFX_CH0
 				lda #s0
-				jsr f2FamiToneSfxPlay
+				jsr f3FamiToneSfxPlay
 				jmp .tse
 			.flip:
 				ldx #FT_SFX_CH2
 				lda #f0
-				jsr f2FamiToneSfxPlay
+				jsr f3FamiToneSfxPlay
 			.tse:
 			lda <b10
 			and #(b4 | b3) ^ $ff
@@ -105,7 +109,7 @@ forever:
 		jsr c4IncreaseHexScore
 	.b3:
 	.pausedend:
-	jsr f2FamiToneUpdate
+	jsr f3FamiToneUpdate
 	lda <i0b8+1
 	sta <i0b9+1
 	lda <i0b8+2
@@ -499,14 +503,14 @@ d1ScrollUp:
 			clc
 			adc <d1d0
 			sta <m8t1+2
-		lda f3e5
+		lda f4e5
 		clc
 		adc <d1d0
-		sta f3e5
-		lda f3e5 + f3e7
+		sta f4e5
+		lda f4e5 + f4e7
 		clc
 		adc <d1d0
-		sta f3e5 + f3e7
+		sta f4e5 + f4e7
 		lda <g0c0
 		pha
 		clc
@@ -690,17 +694,17 @@ d1BounceShake:
 	sta <d1BounceShaker0
 	ldy #0
 	.loop:
-		lda f3b3, y
+		lda f4b3, y
 		beq .next
 		txa
-		cmp f3b1, y
+		cmp f4b1, y
 		bne .next
-		lda f3b2, y
+		lda f4b2, y
 		cmp <d1SoftDrawObjsn0
 		bne .next
-		lda f3b4, y
+		lda f4b4, y
 		tay
-		lda f3bouncexs, y
+		lda f4bouncexs, y
 		clc
 		adc <d1BounceShaker0
 		sta <d1BounceShaker0
@@ -708,9 +712,9 @@ d1BounceShake:
 		.next:
 		tya
 		clc
-		adc #f3b5
+		adc #f4b5
 		tay
-		cpy #f3b5 * 2
+		cpy #f4b5 * 2
 		bne .loop
 	.end:
 	pla
@@ -2388,7 +2392,7 @@ d1FadeToWhite:
 		.waitloop:
 			txa
 			pha
-			jsr f2FamiToneUpdate
+			jsr f3FamiToneUpdate
 			jsr c4TitleSpr0
 			pla
 			tax
@@ -2534,26 +2538,26 @@ d1effecttiles:
 	.db $b6|1, $b8|1, $ba|1 
 d1SD_effects:
 	ldx #0
-	lda f3e1
+	lda f4e1
 	beq .next
 	jsr .draw
 	.next:
-	ldx #f3e7
-	lda f3e1 + f3e7
+	ldx #f4e7
+	lda f4e1 + f4e7
 	beq .end
 	bne .draw 
 	.end: rts
 	.draw:
 		ldy <d1o3
-		lda f3e4, x
+		lda f4e4, x
 		sta o3, y
-		lda f3e5, x
+		lda f4e5, x
 		sta o0, y
-		lda f3e1, x
+		lda f4e1, x
 		and #d1h0
 		ora #2
 		sta o2, y
-		lda f3e1, x
+		lda f4e1, x
 		and #%1111
 		tax
 		lda d1effecttiles, x
@@ -2828,7 +2832,7 @@ m8PlayJumpSound:
 	adc #m0
 	adc <m8PlayJumpSoundw0
 	ldx <m8PlayJumpSoundc0
-	jsr f2FamiToneSfxPlay
+	jsr f3FamiToneSfxPlay
 	rts
 m8JumpAction:
 	lda <m8t0
@@ -2856,7 +2860,7 @@ m8JumpAction:
 		sta o4t0, x
 		ldx #FT_SFX_CH1
 		lda #c0
-		jsr f2FamiToneSfxPlay
+		jsr f3FamiToneSfxPlay
 	.nocrumble:
 	lda <m8x1
 	beq .onwall 
@@ -2913,9 +2917,9 @@ m8JumpAction:
 		lda <m8b8
 		and #m8b0
 		lsr a
-		sta <f3CreateEffectf0
-		lda #f3e2
-		jsr f3CreateEffect
+		sta <f4CreateEffectf0
+		lda #f4e2
+		jsr f4CreateEffect
 		.tuftend:
 	lda <m8b8
 	and #(m8b1 | m8b3) ^ $ff
@@ -3082,7 +3086,7 @@ m8CollideWithObjs:
 	bne .b8
 		stx <m8w1
 		lda <m8y0
-		jsr f3CreateBounce
+		jsr f4CreateBounce
 			lda <m8t0
 			sta <m8x0
 			lda <m8t1
@@ -3099,7 +3103,7 @@ m8CollideWithObjs:
 		sta <m8b8
 		ldx #FT_SFX_CH1
 		lda #b8
-		jsr f2FamiToneSfxPlay
+		jsr f3FamiToneSfxPlay
 		rts
 	.b8:
 	.nospd:
@@ -3196,6 +3200,9 @@ m8Flip:
 	beq m8FlipAction 
 	.end: rts
 m8FlipAction:
+		lda #f2
+		ldx #FT_SFX_CH3
+		jsr f3FamiToneSfxPlay
 	ldx <m8w1
 	lda <m8y0
 	sta <m8t1
@@ -3235,7 +3242,7 @@ m8Explode:
 	sta <m8b8
 		ldx #FT_SFX_CH0
 		lda #d0
-		jsr f2FamiToneSfxPlay
+		jsr f3FamiToneSfxPlay
 	lda <m8x0
 	sta <d1e0
 	lda <m8y0
@@ -3251,7 +3258,7 @@ m8FallToDeath:
 	sta <m8b8
 		ldx #FT_SFX_CH0
 		lda #f1
-		jmp f2FamiToneSfxPlay
+		jmp f3FamiToneSfxPlay
 m8Crumble:
 	lda #1
 	sta <o4c7
@@ -3269,7 +3276,7 @@ m8AlignToWall:
 		pha
 		ldx #FT_SFX_CH0
 		lda #l0
-		jsr f2FamiToneSfxPlay
+		jsr f3FamiToneSfxPlay
 		pla
 		tax
 	.b0:
@@ -3545,7 +3552,7 @@ c3WaitNumFrames:
 		pha
 		tya
 		pha
-		jsr f2FamiToneUpdate
+		jsr f3FamiToneUpdate
 		pla
 		tay
 		pla
@@ -4413,7 +4420,7 @@ c4UpdateTitle:
 		sta <b10
 		ldx #FT_SFX_CH0
 		lda #c1
-		jsr f2FamiToneSfxPlay
+		jsr f3FamiToneSfxPlay
 		jmp c4TitleSpr0
 	.select: 
 	lda <i0b8+1
@@ -4423,7 +4430,7 @@ c4UpdateTitle:
 		sta <c4s0
 		ldx #FT_SFX_CH0
 		lda #s1
-		jsr f2FamiToneSfxPlay
+		jsr f3FamiToneSfxPlay
 		jmp c4TitleSpr0
 	.end: rts
 c4TitleSpr0:
@@ -4460,8 +4467,8 @@ c4TitleSpr0:
 	sta $2000
 	.end: rts
 c4UpdateGame:
-	jsr f3UpdateEffects
-	jsr f3UpdateBounces
+	jsr f4UpdateEffects
+	jsr f4UpdateBounces
 	lda <c4t1
 	beq .b0
 		jsr c4UpdateTieWord
@@ -4533,7 +4540,7 @@ c4CrownWinner:
 	jsr d1BuffPals
 		ldx #FT_SFX_CH1
 		lda #v0
-		jsr f2FamiToneSfxPlay
+		jsr f3FamiToneSfxPlay
 	.end: rts
 	.tie:
 	lda #$ff
@@ -4826,7 +4833,7 @@ FT_MR_TRI_H			= FT_OUT_BUF+8
 FT_MR_NOISE_V		= FT_OUT_BUF+9
 FT_MR_NOISE_F		= FT_OUT_BUF+10
 	.endif
-f2FamiToneInit:
+f3FamiToneInit:
 	stx FT_SONG_LIST_L		
 	sty FT_SONG_LIST_H
 	stx <FT_TEMP_PTR_L
@@ -4845,7 +4852,7 @@ f2FamiToneInit:
 	.endif
 	.endif
 	sta FT_PAL_ADJUST
-	jsr f2FamiToneMusicStop	
+	jsr f3FamiToneMusicStop	
 	ldy #1
 	lda [FT_TEMP_PTR],y		;get instrument list address
 	sta FT_INSTRUMENT_L
@@ -4874,7 +4881,7 @@ f2FamiToneInit:
 	lda #$08				
 	sta APU_PL1_SWEEP
 	sta APU_PL2_SWEEP
-f2FamiToneMusicStop:
+f3FamiToneMusicStop:
 	lda #0
 	sta FT_SONG_SPEED		
 	sta FT_DPCM_EFFECT		
@@ -4902,8 +4909,8 @@ f2FamiToneMusicStop:
 	inx
 	cpx #LOW(FT_ENVELOPES)+FT_ENVELOPES_ALL
 	bne .set_envelopes
-	jmp f2FamiToneSampleStop
-f2FamiToneMusicPlay:
+	jmp f3FamiToneSampleStop
+f3FamiToneMusicPlay:
 	ldx FT_SONG_LIST_L
 	stx <FT_TEMP_PTR_L
 	ldx FT_SONG_LIST_H
@@ -4923,7 +4930,7 @@ f2FamiToneMusicPlay:
 	tay
 	lda FT_SONG_LIST_L		
 	sta <FT_TEMP_PTR_L
-	jsr f2FamiToneMusicStop	
+	jsr f3FamiToneMusicStop	
 	ldx #LOW(FT_CHANNELS)	
 .set_channels:
 	lda [FT_TEMP_PTR],y		;read channel pointers
@@ -4959,11 +4966,11 @@ f2FamiToneMusicPlay:
 	sta FT_SONG_SPEED		
 .skip:
 	rts
-f2FamiToneMusicPause:
+f3FamiToneMusicPause:
 	tax					
 	beq .unpause
 .pause:
-	jsr f2FamiToneSampleStop
+	jsr f3FamiToneSampleStop
 	lda #0				
 	sta FT_CH1_VOLUME
 	sta FT_CH2_VOLUME
@@ -4978,7 +4985,7 @@ f2FamiToneMusicPause:
 .done:
 	sta FT_SONG_SPEED
 	rts
-f2FamiToneUpdate:
+f3FamiToneUpdate:
 	.ifdef FT_THREAD
 	lda FT_TEMP_PTR_L
 	pha
@@ -5042,10 +5049,10 @@ f2FamiToneUpdate:
 	bcc .no_new_note5
 	lda FT_CH5_NOTE
 	bne .play_sample
-	jsr f2FamiToneSampleStop
+	jsr f3FamiToneSampleStop
 	bne .no_new_note5		
 .play_sample:
-	jsr f2FamiToneSamplePlayM
+	jsr f3FamiToneSamplePlayM
 .no_new_note5:
 	.endif
 .update_envelopes:
@@ -5377,12 +5384,12 @@ _FT2ChannelUpdate:
 	lda <FT_TEMP_PTR_H
 	sta FT_CHN_PTR_H,x
 	rts
-f2FamiToneSampleStop:
+f3FamiToneSampleStop:
 	lda #%00001111
 	sta APU_SND_CHN
 	rts
 	.ifdef FT_DPCM_ENABLE
-f2FamiToneSamplePlayM:		
+f3FamiToneSamplePlayM:		
 	ldx FT_DPCM_EFFECT
 	beq _FT2SamplePlay
 	tax
@@ -5394,7 +5401,7 @@ f2FamiToneSamplePlayM:
 	sta FT_DPCM_EFFECT
 	txa
 	jmp _FT2SamplePlay
-f2FamiToneSamplePlay:
+f3FamiToneSamplePlay:
 	ldx #1
 	stx FT_DPCM_EFFECT
 _FT2SamplePlay:
@@ -5425,7 +5432,7 @@ _FT2SamplePlay:
 	rts
 	.endif
 	.ifdef FT_SFX_ENABLE
-f2FamiToneSfxInit:
+f3FamiToneSfxInit:
 	stx <FT_TEMP_PTR_L
 	sty <FT_TEMP_PTR_H
 	ldy #0
@@ -5462,7 +5469,7 @@ _FT2SfxClearChannel:
 	sta FT_SFX_BUF+3,x		;mute pulse2
 	sta FT_SFX_BUF+9,x		;mute noise
 	rts
-f2FamiToneSfxPlay:
+f3FamiToneSfxPlay:
 	asl a					
 	tay
 	jsr _FT2SfxClearChannel	
@@ -5594,119 +5601,119 @@ _FT2NoteTableMSB:
 
 	
 
-f3CreateEffect:
+f4CreateEffect:
 	pha
-	lda f3e1
+	lda f4e1
 	beq .spot1
-	lda f3e1 + f3e7
+	lda f4e1 + f4e7
 	beq .spot2
 	and #%1111
-	sta <f3CreateEffecte0
-	lda f3e1
+	sta <f4CreateEffecte0
+	lda f4e1
 	and #%1111
-	cmp <f3CreateEffecte0
+	cmp <f4CreateEffecte0
 	bcc .spot2
 	.spot1:
-		stx f3e4
+		stx f4e4
 		ldx #0
 		beq .store
 	.spot2:
-		stx f3e4 + f3e7
-		ldx #f3e7
+		stx f4e4 + f4e7
+		ldx #f4e7
 	.store:
 	pla
 	and #d1h0 ^ $ff
-	ora <f3CreateEffectf0
-	sta f3e1, x
+	ora <f4CreateEffectf0
+	sta f4e1, x
 	tya
-	sta f3e5, x
+	sta f4e5, x
 	lda #1
-	sta f3e6, x
+	sta f4e6, x
 	rts
-f3UpdateEffects:
+f4UpdateEffects:
 	ldx #0
-	lda f3e1
+	lda f4e1
 	beq .next
 	jsr .update
 	.next:
-	ldx #f3e7
-	lda f3e1 + f3e7
+	ldx #f4e7
+	lda f4e1 + f4e7
 	bne .update
 	.end: rts
 	.update:
-		lda f3e6, x
+		lda f4e6, x
 		and #%111
 		bne .updateend
-		lda f3e1, x
+		lda f4e1, x
 		clc
 		adc #1
-		sta f3e1, x
+		sta f4e1, x
 		and #%11
 		pha
 			cmp #1
 			bne .moveend
-				dec f3e5, x
-				dec f3e5, x
-				dec f3e5, x
-				lda f3e1, x
+				dec f4e5, x
+				dec f4e5, x
+				dec f4e5, x
+				lda f4e1, x
 				and #d1h0
 				bne .b0
-					inc f3e4, x
-					inc f3e4, x
-					inc f3e4, x
+					inc f4e4, x
+					inc f4e4, x
+					inc f4e4, x
 					jmp .moveend
 				.b0:
-				dec f3e4, x
-				dec f3e4, x
-				dec f3e4, x
+				dec f4e4, x
+				dec f4e4, x
+				dec f4e4, x
 			.moveend:
 		pla
 		eor #%11 
 		bne .updateend
 		lda #0
-		sta f3e1, x
+		sta f4e1, x
 		.updateend:
-		inc f3e6, x
+		inc f4e6, x
 		rts
-f3CreateBounce:
+f4CreateBounce:
 	clc
 	adc #8
 	pha
-	lda f3b3
+	lda f4b3
 	beq .spot1
-	lda f3b3 + f3b5
+	lda f4b3 + f4b5
 	beq .spot2
-	lda f3b4 + f3b5
+	lda f4b4 + f4b5
 	and #%1111
-	sta <f3CreateBounceb0
-	lda f3b4
+	sta <f4CreateBounceb0
+	lda f4b4
 	and #%1111
-	cmp <f3CreateBounceb0
+	cmp <f4CreateBounceb0
 	bcc .spot2
 	.spot1:
 		ldy #0
 		beq .spotsend
 	.spot2:
-		ldy #f3b5
+		ldy #f4b5
 	.spotsend:
 	lda #0
-	sta <f3CreateBounces0
+	sta <f4CreateBounces0
 	lda o4y0, x
-	sta <f3CreateBounceo0
+	sta <f4CreateBounceo0
 	lda o4s0, x
 	cmp #2
 	bcc .cmpy
 		lda o4y0, x
 		.yloop:
-			inc <f3CreateBounces0
+			inc <f4CreateBounces0
 			clc
 			adc #16
 			bcc .yloop
-		sta <f3CreateBounceo0
+		sta <f4CreateBounceo0
 	.cmpy:
 	pla
 	sec
-	sbc <f3CreateBounceo0
+	sbc <f4CreateBounceo0
 	bcs .b1
 		lda #0
 	.b1:
@@ -5715,46 +5722,46 @@ f3CreateBounce:
 	lsr a
 	lsr a
 	clc
-	adc <f3CreateBounces0
-	sta f3b2, y
+	adc <f4CreateBounces0
+	sta f4b2, y
 	lda o4n0, x
 	clc
 	adc #2
 	sec
-	sbc f3b2, y
-	sta f3b2, y
+	sbc f4b2, y
+	sta f4b2, y
 	lda #1
-	sta f3b3, y
+	sta f4b3, y
 	lsr a 
-	sta f3b4, y
+	sta f4b4, y
 	txa
-	sta f3b1, y
+	sta f4b1, y
 	rts
-f3bouncexs:
+f4bouncexs:
 	.db -4, 3, -2, 2, -1, 1, -1, 1
-f3bouncexsend:
-f3UpdateBounces:
+f4bouncexsend:
+f4UpdateBounces:
 	ldx #0
-	lda f3b3
+	lda f4b3
 	beq .next
 	jsr .update
 	.next:
-	ldx #f3b5
-	lda f3b3 + f3b5
+	ldx #f4b5
+	lda f4b3 + f4b5
 	beq .end
 	bne .update 
 	.end: rts
 	.update:
-		inc f3b3, x
-		lda f3b3, x
+		inc f4b3, x
+		lda f4b3, x
 		and #%1
 		bne .end
-		inc f3b4, x
-		lda f3b4, x
-		cmp #f3b6
+		inc f4b4, x
+		lda f4b4, x
+		cmp #f4b6
 		bne .end
 		lda #0
-		sta f3b3, x
+		sta f4b3, x
 		rts
 sounds:
 	
@@ -5781,6 +5788,7 @@ sounds:
 	.dw .sfx_ntsc_fall
 	.dw .sfx_ntsc_backflip
 	.dw .sfx_ntsc_victory
+	.dw .sfx_ntsc_flip_monkey
 .sfx_ntsc_bounce:
 	.db $82,$01,$81,$70,$80,$3f,$85,$03,$84,$79,$83,$3d,$87,$eb,$88,$03
 	.db $86,$8f,$89,$f0,$01,$81,$64,$84,$6a,$87,$de,$01,$81,$58,$80,$3c
@@ -5814,7 +5822,7 @@ sounds:
 .sfx_ntsc_land:
 	.db $8a,$0c,$89,$35,$02,$89,$f0,$03,$89,$32,$03,$00
 .sfx_ntsc_shock:
-	.db $8a,$04,$89,$3f,$02,$8a,$07,$03,$8a,$04,$03,$8a,$06,$02,$8a,$04
+	.db $8a,$04,$89,$38,$02,$8a,$07,$03,$8a,$04,$03,$8a,$06,$02,$8a,$04
 	.db $02,$8a,$0a,$03,$8a,$04,$03,$8a,$07,$02,$8a,$04,$02,$8a,$06,$03
 	.db $8a,$04,$03,$8a,$09,$02,$8a,$04,$02,$8a,$07,$03,$8a,$04,$03,$8a
 	.db $0a,$02,$00
@@ -5888,7 +5896,8 @@ sounds:
 	.db $04,$80,$33,$01,$84,$7e,$03,$80,$31,$02,$80,$30,$84,$5e,$05,$84
 	.db $96,$83,$33,$05,$84,$7e,$05,$84,$5e,$05,$84,$96,$83,$31,$05,$84
 	.db $7e,$05,$84,$5e,$05,$00
-
+.sfx_ntsc_flip_monkey:
+	.db $8a,$06,$01,$89,$31,$02,$89,$32,$01,$89,$33,$01,$00
 titletiles:
 	
 	.db $9c, $9c, $9c, $9c, $9c, $9c, $9c, $9c, $9c, $9c, $9c, $9c, $9c, $9c, $9c, $9c, $9c, $9c, $9c, $9c, $9c, $9c, $9c, $9c, $9c, $9c, $9c, $9c, $9c, $9c, $9c, $9c
@@ -6526,10 +6535,6 @@ d1SetPalettesp0 .rs 2
 d1DrawNTTilesAndAttrsd0 .rs 2
 	.rsset 0
 d1UpdateBasePalsa0 .rs 2
-	.rsset 2
-resetm2 .rs 1
-resetm1 .rs 1
-resetm0 .rs 1
 	.rsset 0
 c3SpeedToMvmts0 .rs 1
 c3SpeedToMvmtw0 .rs 1
@@ -6539,12 +6544,12 @@ c3SmoothToTargc0 .rs 1
 m8CheckStillOnWallo0 .rs 1
 m8CheckStillOnWallo1 .rs 1
 	.rsset 0
-f3CreateBounceb0 .rs 1
-f3CreateBounces0 .rs 1
-f3CreateBounceo0 .rs 1
+f4CreateBounceb0 .rs 1
+f4CreateBounces0 .rs 1
+f4CreateBounceo0 .rs 1
 	.rsset 0
-f3CreateEffectf0 .rs 1
-f3CreateEffecte0 .rs 1
+f4CreateEffectf0 .rs 1
+f4CreateEffecte0 .rs 1
 	.rsset 3
 m8CollideWithObjso1 .rs 1
 m8CollideWithObjso0 .rs 1
@@ -6619,6 +6624,7 @@ c4m0 = $01a3
 c4t2 = (240 / 2) - 4
 c4c4 = 157
 m3 = 9
+f2 = 19
 f0 = 3
 m7 = 13
 m4 = 10
@@ -6656,21 +6662,21 @@ m8b7 = 2
 m8j0 = 12
 m8x2 = (256 / 2) - (m8w0/ 2)
 b4 = %00001000
-f3e2 = %00010000
-f3e0 .rs 8
-f3e5 = f3e0+ 2
-f3b5 = 4
-f3e1 = f3e0+ 0
-f3e7 = 4
-f3b0 .rs 8
-f3b2 = f3b0+ 1
-f3e3 = %00100000
-f3b6 = f3bouncexsend- f3bouncexs
-f3e6 = f3e0+ 3
-f3b1 = f3b0+ 0
-f3b4 = f3b0+ 3
-f3e4 = f3e0+ 1
-f3b3 = f3b0+ 2
+f4e2 = %00010000
+f4e0 .rs 8
+f4e5 = f4e0+ 2
+f4b5 = 4
+f4e1 = f4e0+ 0
+f4e7 = 4
+f4b0 .rs 8
+f4b2 = f4b0+ 1
+f4e3 = %00100000
+f4b6 = f4bouncexsend- f4bouncexs
+f4e6 = f4e0+ 3
+f4b1 = f4b0+ 0
+f4b4 = f4b0+ 3
+f4e4 = f4e0+ 1
+f4b3 = f4b0+ 2
 b1 = %00000001
 o4t13 = 32
 o4o0 = 5
