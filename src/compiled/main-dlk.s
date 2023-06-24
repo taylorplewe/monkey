@@ -1971,7 +1971,6 @@ d1BuffAllWhite:
 		dey
 		bne .loop
 	stx <d1b1
-	stx $01a6
 	rts
 d1BuffPals: 
 	pha
@@ -2659,6 +2658,8 @@ m8UpdateBothMonkeys:
 			sta <i0b8
 			lda <i0b9, x
 			sta <i0b9
+			lda i0b10, x
+			sta i0b10
 			lda <m8b8, x
 			sta <m8b8
 			lda <m8x0, x
@@ -3388,12 +3389,9 @@ m8FollowTarg:
 		sta <m8y0
 	rts
 m8CheckFlip:
-	lda <i0b8
+	lda i0b10
 	and #i0b1
 	beq .end
-	lda <i0b9
-	and #i0b1
-	bne .end
 	jsr m8FlipAction
 	.end: rts
 m8UpdateVictor:
@@ -3578,6 +3576,15 @@ i0Read:
 		rol <i0b8+2
 		dex
 		bne .loop
+	ldx #3
+	.pressedloop:
+		dex
+		lda <i0b9, x
+		eor #$ff
+		and <i0b8, x
+		sta i0b10, x
+		cpx #0
+		bne .pressedloop
 	.end: rts
 	
 
@@ -4407,12 +4414,9 @@ c4UpdateTitle:
 			jmp forever
 	.b1:
 	jsr c4thomas_c_farraday
-	lda <i0b8+1
+	lda i0b10+1
 	and #i0b4 | i0b5 | i0b2
 	beq .select
-	lda <i0b9+1
-	and #i0b4 | i0b5 | i0b2
-	bne .select
 		lda <b10
 		eor #b6
 		sta <b10
@@ -4475,20 +4479,14 @@ c4UpdateGame:
 	bmi .end
 	cmp #64
 	bcc .end
-	lda <i0b8+1
-	beq .p2
-	lda <i0b9+1
-	cmp <i0b8+1
+	lda i0b10+1
 	beq .p2
 		bne c4ResetGame 
 	.p2:
 	lda <b10
 	and #b6
 	beq .end
-	lda <i0b8+2
-	beq .end
-	lda <i0b9+2
-	cmp <i0b8+2
+	lda i0b10+2
 	beq .end
 		bne c4ResetGame 
 	.end: rts
@@ -4587,22 +4585,16 @@ c4IncreaseHexScore:
 		sta <o4t14
 		rts
 c4Pause:
-	lda <i0b8+1
+	lda i0b10+1
 	and #i0b3
-	beq .p2
-	lda <i0b9+1
-	and #i0b3
-	beq .act
+	bne .act
 	.p2:
 	lda <b10
 	and #b6
 	beq .end
-	lda <i0b8+2
+	lda i0b10+2
 	and #i0b3
 	beq .end
-	lda <i0b9+2
-	and #i0b3
-	bne .end
 		.act:
 		lda <p2
 		beq .pause
@@ -4624,7 +4616,6 @@ _tcf:
 _tcfe:
 tcf = $01a0
 tcf_ctr = $01a1
-batting_practice = $01a2
 c4thomas_c_farraday:
 	lda tcf
 	cmp #$ff
@@ -4638,10 +4629,7 @@ c4thomas_c_farraday:
 		sta tcf
 	.n:
 	ldx tcf
-	lda <i0b9+2
-	eor #$ff
-	and <i0b8+2
-	sta batting_practice
+	lda i0b10+2
 	beq .end
 	cmp _tcf, x
 	bne .nn
@@ -6730,6 +6718,7 @@ i0b0 = %10000000
 i0b6 = %00000010
 i0b7 = %00000001
 i0b3 = %00010000
+i0b10 = $01b0
 i0b2 = %00100000
 i0b5 = %00000100
 i0b4 = %00001000
@@ -6753,7 +6742,7 @@ d1c5 = 32
 d1v0 = %10000000
 d1t1 = 114
 d1o5 = $4d
-d1s5 = $01c0
+d1s5 = $01a8
 d1t2 = $50
 d1w0 = $20
 d1t5 = $6c| 1

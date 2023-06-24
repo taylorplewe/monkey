@@ -17,7 +17,8 @@ const BTN_R			%00000001
 ;	2 - player 2
 ; current one gets copied into 0 when updating that monkey
 var [3] buttonsDown ; ABsSUDLR
-var [3] buttonsPressed
+var [3] buttonsPrev
+const buttonsPressed $01b0
 
 ; get controller input from player 1 and store it in buttonsDown
 	; modifies:
@@ -41,4 +42,15 @@ Read:
 		rol buttonsDown+2
 		dex
 		bne .loop
+	
+	ldx #3
+	.pressedloop:
+		dex
+		lda buttonsPrev, x
+		eor #$ff
+		and buttonsDown, x
+		sta buttonsPressed, x
+		cpx #0
+		bne .pressedloop
+
 	.end: rts

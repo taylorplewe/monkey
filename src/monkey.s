@@ -79,6 +79,8 @@ UpdateBothMonkeys:
 		; copy all of this monkey's vars to working var space
 			lda input.buttonsDown, x
 			sta input.buttonsDown
+			lda input.buttonsPrev, x
+			sta input.buttonsPrev
 			lda input.buttonsPressed, x
 			sta input.buttonsPressed
 			lda bools, x
@@ -233,7 +235,7 @@ Jump:
 		lda bools 
 		and #BOOLS_BFLIP
 		bne .end
-		lda input.buttonsPressed
+		lda input.buttonsPrev
 		and #input.BTN_A
 		bne .end
 			jsr PlayJumpSound
@@ -920,12 +922,9 @@ FollowTarg:
 
 CheckFlip:
 	; did player press B
-	lda input.buttonsDown
-	and #input.BTN_B
-	beq .end
 	lda input.buttonsPressed
 	and #input.BTN_B
-	bne .end
+	beq .end
 	jsr FlipAction
 	.end: rts
 

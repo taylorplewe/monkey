@@ -191,9 +191,9 @@ forever:
 	jsr ft.FamiToneUpdate
 
 	lda input.buttonsDown+1
-	sta input.buttonsPressed+1
+	sta input.buttonsPrev+1
 	lda input.buttonsDown+2
-	sta input.buttonsPressed+2
+	sta input.buttonsPrev+2
 
 	; done
 	lda boolParty

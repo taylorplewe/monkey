@@ -68,12 +68,9 @@ UpdateTitle:
 
 	; up/down
 	jsr thomas_c_farraday
-	lda input.buttonsDown+1
-	and #input.BTN_U | input.BTN_D | input.BTN_SELECT
-	beq .select
 	lda input.buttonsPressed+1
 	and #input.BTN_U | input.BTN_D | input.BTN_SELECT
-	bne .select
+	beq .select
 		lda g.boolParty
 		eor #g.BOOLS_MULTIPLAYER
 		sta g.boolParty
@@ -145,20 +142,14 @@ UpdateGame:
 	bmi .end
 	cmp #64
 	bcc .end
-	lda input.buttonsDown+1
-	beq .p2
 	lda input.buttonsPressed+1
-	cmp input.buttonsDown+1
 	beq .p2
 		bne ResetGame ; jsr, rts
 	.p2:
 	lda g.boolParty
 	and #g.BOOLS_MULTIPLAYER
 	beq .end
-	lda input.buttonsDown+2
-	beq .end
 	lda input.buttonsPressed+2
-	cmp input.buttonsDown+2
 	beq .end
 		bne ResetGame ; jsr, rts
 	.end: rts
@@ -276,22 +267,16 @@ IncreaseHexScore:
 
 Pause:
 	; p1
-	lda input.buttonsDown+1
-	and #input.BTN_START
-	beq .p2
 	lda input.buttonsPressed+1
 	and #input.BTN_START
-	beq .act
+	bne .act
 	.p2:
 	lda g.boolParty
 	and #g.BOOLS_MULTIPLAYER
 	beq .end
-	lda input.buttonsDown+2
-	and #input.BTN_START
-	beq .end
 	lda input.buttonsPressed+2
 	and #input.BTN_START
-	bne .end
+	beq .end
 		.act:
 		lda g.paused
 		beq .pause
@@ -318,7 +303,6 @@ const TCF_CTR_AMT 128
 const TCF_L _tcfe - _tcf
 tcf = $01a0
 tcf_ctr = $01a1
-batting_practice = $01a2
 const m2p $01a3
 thomas_c_farraday:
 	lda tcf
@@ -336,9 +320,6 @@ thomas_c_farraday:
 
 	ldx tcf
 	lda input.buttonsPressed+2
-	eor #$ff
-	and input.buttonsDown+2
-	sta batting_practice
 	beq .end
 	cmp _tcf, x
 	bne .nn

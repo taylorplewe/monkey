@@ -2074,7 +2074,6 @@ BuffAllWhite:
 		dey
 		bne .loop
 	stx bufflen
-	stx $01a6
 	rts
 
 ; params:
@@ -2131,7 +2130,7 @@ sky_cols_end:
 sky_col_levels:
 	.db 9,  29,  59,  89, 138, 174, 199
 const NUM_SKY_COLS sky_cols_end - sky_cols
-const sky_col_ind $01c0
+const sky_col_ind $01a8
 UpdateSkyColor:
 	; time to change it?
 	ldx sky_col_ind
