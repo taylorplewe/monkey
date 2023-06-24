@@ -58,6 +58,13 @@ video {
 	background: black;
 	width: 100%;
 }
+hr {
+	border-color: #444444;
+	border-style: solid;
+	border-top-width: 0;
+	border-right-width: 0;
+	border-left-width: 0;
+}
 
 @media (max-width: 720px) {
 	main {

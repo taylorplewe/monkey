@@ -161,7 +161,7 @@ scenarios_easy:
 	.6:
 		.db (.6_addrsend - .6_addrs) / 2
 		.6_addrs:
-			.dw .6_1, .6_2, .6_3
+			.dw .6_1, .6_2, .6_3, .6_4
 		.6_addrsend:
 		.6_1:
 			.db 40
@@ -187,6 +187,14 @@ scenarios_easy:
 			.db 132, 0, 0, obj.TYPES.NORMAL
 			.db 220, 32, 0, obj.TYPES.THORN_R
 			.db 212, 0, 0, obj.TYPES.NORMAL
+		.6_4:
+			.db 48
+			.db 60, 88, 0, obj.TYPES.UP
+			.db 116, 120, 0, obj.TYPES.THORN
+			.db 190, 120, 0, obj.TYPES.DOWN
+			.db 116, 20, 0, obj.TYPES.THORN
+			.db 60, 20, 0, obj.TYPES.UP
+			.db 116, 80, 0, obj.TYPES.THORN
 	.7:
 		.db (.7_addrsend - .7_addrs) / 2
 		.7_addrs:
@@ -222,7 +230,7 @@ scenarios_easy:
 	.8:
 		.db (.8_addrsend - .8_addrs) / 2
 		.8_addrs:
-			.dw .8_4
+			.dw .8_1, .8_2, .8_3, .8_4
 		.8_addrsend:
 		.8_1:
 			.db 80
