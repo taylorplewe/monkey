@@ -35,9 +35,9 @@ idset SOUNDS {
 	CHANGE_SELECT
 	SELECT
 	FALL
-	BACKFLIP
 	VICTORY
 	FLIP_MONKEY
+	PEEK
 }
 
 var [1] boolParty

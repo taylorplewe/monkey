@@ -39,15 +39,15 @@ reset:
 	ldy #HIGH(sounds)
 	jsr f3FamiToneSfxInit
 	jsr c4InitTitle
-	lda <b10
+	lda <b9
 	ora #b7
-	sta <b10
+	sta <b9
 	lda #%10000000
 	sta $2000
-	sta <p0
+	sta <p1
 	lda #%00011110
 	sta $2001
-	sta <p1
+	sta <p2
 	ldx #2
 	.sync2:
 		lda $2002
@@ -62,11 +62,11 @@ forever:
 		inc <s2+1
 	.b0:
 	jsr i0Read
-	lda <b10
+	lda <b9
 	and #b7
 	bne .title
 			jsr c4Pause
-			lda <p2
+			lda <p3
 			bne .pausedend
 		lda <c4v0
 		beq .b1
@@ -80,7 +80,7 @@ forever:
 		.b2:
 		jsr d1Update
 		jsr c4UpdateGame
-		lda <b10
+		lda <b9
 		and #b4 | b3
 		beq .forevershared
 			and #b3
@@ -94,9 +94,9 @@ forever:
 				lda #f0
 				jsr f3FamiToneSfxPlay
 			.tse:
-			lda <b10
+			lda <b9
 			and #(b4 | b3) ^ $ff
-			sta <b10
+			sta <b9
 			jmp .forevershared
 	.title:
 		jsr c4UpdateTitle
@@ -112,11 +112,11 @@ forever:
 	sta <i0b9+1
 	lda <i0b8+2
 	sta <i0b9+2
-	lda <b10
+	lda <b9
 	ora #%10000000
-	sta <b10
+	sta <b9
 	.waitnmi:
-		lda <b10
+		lda <b9
 		bmi .waitnmi
 	jmp forever
 nmi:
@@ -125,7 +125,7 @@ nmi:
 	pha
 	txa
 	pha
-	lda <b10
+	lda <b9
 	asl a
 	bcc .recal 
 	lda #0
@@ -153,17 +153,17 @@ nmi:
 		ldy d1p0, x
 		bne .buffoloop
 	.buffoloopend:
-	lda <b10
+	lda <b9
 	and #%01111111
-	sta <b10
+	sta <b9
 	lda <d1x0 
 	sta $2005
 	lda <d1s0
 	sta $2005
 	.recal:
-	lda <p0
-	sta $2000
 	lda <p1
+	sta $2000
+	lda <p2
 	sta $2001
 	pla
 	tax
@@ -266,7 +266,7 @@ d1UpdateTitle:
 	sta o2
 	lda #0
 	sta <d1m1
-	lda <b10
+	lda <b9
 	and #b6
 	asl a
 	asl a
@@ -419,7 +419,7 @@ d1Update:
 	jsr d1SD_score
 	lda #0
 	sta <d1m2
-	lda <b10
+	lda <b9
 	and #b1
 	bne .front
 	lda <c4v0
@@ -445,7 +445,7 @@ d1Update:
 d1FollowBothMonkeys:
 	ldx #1
 	jsr d1FollowMonkey
-	lda <b10
+	lda <b9
 	and #b6
 	bne .b0
 		rts
@@ -479,9 +479,9 @@ d1ScrollUp:
 				sec
 				sbc #16
 				sta <d1s0
-				lda <p0
+				lda <p1
 				eor #%00000010
-				sta <p0
+				sta <p1
 				jsr d1IncreaseScore
 				jsr c4IncreaseHexScore
 		.b0:
@@ -1277,9 +1277,9 @@ d1SD_timer:
 		sec
 		sbc <o4t15
 		bne .shocksoundend
-			lda <b10
+			lda <b9
 			ora #b3
-			sta <b10
+			sta <b9
 		.shocksoundend:
 			lda <d1a0
 			and #%10
@@ -1695,9 +1695,9 @@ d1SD_flip:
 	bne .flipsoundend
 	lda <d1d1
 	bpl .flipsoundend
-		lda <b10
+		lda <b9
 		ora #b4
-		sta <b10
+		sta <b9
 	.flipsoundend:
 	pla
 	tax
@@ -2276,7 +2276,7 @@ d1SD_monkeys:
 	lda #0
 	sta <d1SD_monkeya0
 	jsr d1SD_monkey
-	lda <b10
+	lda <b9
 	and #b6
 	bne .b0
 		rts
@@ -2382,9 +2382,9 @@ d1FadeToWhite:
 		bne .fadeloop
 	cpy #32
 	beq .b2
-		lda <b10
+		lda <b9
 		ora #b0
-		sta <b10
+		sta <b9
 		ldx #2
 		.waitloop:
 			txa
@@ -2624,9 +2624,9 @@ m8initbools:
 m8initwallinds:
 	.db 0, o4o0, 0
 m8Init:
-	lda <b10
+	lda <b9
 	and #b1 ^ $ff
-	sta <b10
+	sta <b9
 	ldx #2
 	.loop:
 		lda #0
@@ -2709,12 +2709,12 @@ m8UpdateBothMonkeys:
 			sta <m8u1, x
 			lda <m8w1
 			sta <m8w1, x
-		lda <b10
+		lda <b9
 		and #b6
 		beq .end 
-		lda <b10
+		lda <b9
 		eor #b5
-		sta <b10
+		sta <b9
 		inx
 		cpx #3
 		bcc .loop
@@ -2738,9 +2738,9 @@ m8Update:
 		.targoff:
 		lda #$ff
 		sta <m8t0
-		lda <b10
+		lda <b9
 		and #b1 ^ $ff
-		sta <b10
+		sta <b9
 	.targend:
 	lda <m8b8
 	and #m8b1
@@ -2811,7 +2811,7 @@ m8Jump:
 	sta <m8u1
 	.end: rts
 m8PlayJumpSound:
-	lda <b10
+	lda <b9
 	and #b5
 	pha
 		bne .2
@@ -2923,9 +2923,9 @@ m8JumpAction:
 	lda <m8b8
 	and #(m8b1 | m8b3) ^ $ff
 	sta <m8b8
-	lda <b10
+	lda <b9
 	and #b1 ^ $ff
-	sta <b10
+	sta <b9
 	lda #$ff
 	sta <m8w1
 	rts
@@ -3217,9 +3217,9 @@ m8FlipAction:
 		clc
 		adc #8
 		sta <m8x0
-		lda <b10
+		lda <b9
 		ora #b1
-		sta <b10
+		sta <b9
 		.end: rts
 	.l:
 		lda o4x0, x
@@ -3540,9 +3540,9 @@ c3ModRandomNum:
 		sbc <c3ModRandomNumm0
 		jmp .modloop
 c3WaitNumFrames:
-	lda <b10
+	lda <b9
 	ora #b0
-	sta <b10
+	sta <b9
 	.loop:
 		txa
 		pha
@@ -3594,9 +3594,9 @@ o4Init:
 	sta <o4t15
 	lda #o4m0
 	sta <o4m1
-	lda <b10
+	lda <b9
 	ora #b2
-	sta <b10
+	sta <b9
 	lda #0
 	sta <o4m2
 	sta <o4b2
@@ -3809,7 +3809,7 @@ o4Update:
 					adc <m8y0, x
 					sta <m8y0, x
 			.nextm:
-			lda <b10
+			lda <b9
 			and #b6
 			beq .nom
 			inx 
@@ -4038,9 +4038,9 @@ g0Init:
 		cpx #0
 		bne .clearloop
 	sta <g0n0
-	lda <b10
+	lda <b9
 	ora #b2
-	sta <b10
+	sta <b9
 		lda #$ff
 		sta <g0c0
 		lda #1
@@ -4081,7 +4081,7 @@ NUM_INIT_OBJS = (g0Init - g0initscenario) / 5
 g0GenerateWholeHalf:
 	lda #g0n1
 	sta <g0s0
-	lda <b10
+	lda <b9
 	and #b2
 	bne .l
 		lda #g0n1 * o4o0
@@ -4177,9 +4177,9 @@ g0Generate:
 	beq .b2
 		jmp g0Generate
 	.b2:
-	lda <b10
+	lda <b9
 	eor #b2
-	sta <b10
+	sta <b9
 	rts
 g0CreateObjs:
 	ldy #0
@@ -4366,12 +4366,12 @@ c4InitTitle:
 	sta c4m0
 	rts
 c4InitGame:
-	lda <b10
+	lda <b9
 	and #b7 ^ $ff
-	sta <b10
+	sta <b9
 	lda #0
-	sta <p0
 	sta <p1
+	sta <p2
 	sta $2000
 	sta $2001
 	sta <c4v0
@@ -4387,10 +4387,10 @@ c4InitGame:
 	jsr d1Update
 	lda #%10100000
 	sta $2000
-	sta <p0
+	sta <p1
 	lda #%00011110
 	sta $2001
-	sta <p1
+	sta <p2
 	rts
 c4UpdateTitle:
 	lda <c2
@@ -4417,9 +4417,9 @@ c4UpdateTitle:
 	lda i0b10+1
 	and #i0b4 | i0b5 | i0b2
 	beq .select
-		lda <b10
+		lda <b9
 		eor #b6
-		sta <b10
+		sta <b9
 		ldx #FT_SFX_CH0
 		lda #c1
 		jsr f3FamiToneSfxPlay
@@ -4451,7 +4451,7 @@ c4TitleSpr0:
 	sta $2005
 	lda #0
 	sta $2005
-	lda <p0
+	lda <p1
 	sta $2000
 	ldx #0
 	.spr0wait3:
@@ -4465,7 +4465,7 @@ c4TitleSpr0:
 		bne .spr0wait3
 	stx $2005
 	stx $2005
-	lda <p0
+	lda <p1
 	sta $2000
 	.end: rts
 c4UpdateGame:
@@ -4484,7 +4484,7 @@ c4UpdateGame:
 	beq .p2
 		bne c4ResetGame 
 	.p2:
-	lda <b10
+	lda <b9
 	and #b6
 	beq .end
 	lda i0b10+2
@@ -4496,7 +4496,7 @@ c4ResetGame:
 	jsr c4InitGame
 	jmp d1FadeToBase
 c4CrownWinner:
-	lda <b10
+	lda <b9
 	and #b6
 	beq .end
 	ldx #1
@@ -4590,34 +4590,34 @@ c4Pause:
 	and #i0b3
 	bne .act
 	.p2:
-	lda <b10
+	lda <b9
 	and #b6
 	beq .end
 	lda i0b10+2
 	and #i0b3
 	beq .end
 		.act:
-		lda <p2
+		lda <p3
 		beq .pause
 			lda #0
-			sta <p2
-			lda <p1
+			sta <p3
+			lda <p2
 			and #%00011111
-			sta <p1
+			sta <p2
 			rts
 		.pause:
 			lda #1
-			sta <p2
-			lda <p1
+			sta <p3
+			lda <p2
 			ora #%11100000
-			sta <p1
+			sta <p2
 	.end: rts
 c4Peek:
 	lda <d1d1
 	bpl .end
 	lda <c4v0
 	bne .end
-	lda <b10
+	lda <b9
 	and #b6
 	bne .mult
 		lda <i0b8+1
@@ -4640,6 +4640,12 @@ c4Peek:
 	.act:
 	lda #1
 	jsr d1ScrollUp
+	lda <i0b9+1
+	and #i0b4
+	bne .end
+	lda #p0
+	ldx #FT_SFX_CH3
+	jsr f3FamiToneSfxPlay
 	.end: rts
 _tcf:
 	.dw $0202, $0101, $0102, $0102
@@ -5802,23 +5808,23 @@ sounds:
 	.dw .sfx_ntsc_change_selection
 	.dw .sfx_ntsc_select
 	.dw .sfx_ntsc_fall
-	.dw .sfx_ntsc_backflip
 	.dw .sfx_ntsc_victory
 	.dw .sfx_ntsc_flip_monkey
+	.dw .sfx_ntsc_peek
 .sfx_ntsc_bounce:
-	.db $82,$01,$81,$70,$80,$3f,$85,$03,$84,$79,$83,$3d,$87,$eb,$88,$03
-	.db $86,$8f,$89,$f0,$01,$81,$64,$84,$6a,$87,$de,$01,$81,$58,$80,$3c
-	.db $84,$5a,$83,$3a,$87,$d1,$01,$81,$4c,$84,$4b,$87,$c4,$01,$81,$40
-	.db $84,$3b,$87,$b7,$01,$81,$34,$80,$39,$84,$2c,$83,$37,$87,$aa,$01
-	.db $81,$28,$84,$1c,$87,$9d,$01,$81,$1c,$84,$0d,$87,$90,$01,$81,$10
-	.db $85,$02,$84,$fd,$87,$83,$01,$81,$04,$84,$ee,$87,$76,$01,$82,$00
-	.db $81,$f8,$80,$37,$84,$de,$83,$35,$87,$69,$01,$81,$ec,$84,$cf,$87
-	.db $5c,$01,$81,$e0,$80,$35,$84,$bf,$83,$34,$87,$4f,$01,$81,$d4,$84
-	.db $b0,$87,$42,$01,$81,$c8,$84,$a0,$87,$35,$01,$81,$bc,$80,$33,$84
-	.db $91,$83,$32,$87,$28,$01,$81,$b0,$84,$81,$87,$1b,$01,$81,$a4,$84
-	.db $72,$87,$0e,$01,$81,$98,$80,$31,$84,$62,$83,$31,$87,$01,$01,$81
-	.db $8e,$84,$5c,$87,$f9,$88,$02,$01,$80,$30,$83,$30,$86,$80,$7f,$7f
-	.db $7f,$7f,$0d,$82,$01,$81,$fb,$80,$31,$01,$00
+	.db $82,$01,$81,$70,$80,$38,$85,$03,$84,$79,$83,$38,$87,$eb,$88,$03
+	.db $86,$8f,$89,$f0,$01,$81,$64,$84,$6a,$87,$de,$01,$81,$58,$80,$37
+	.db $84,$5a,$83,$37,$87,$d1,$01,$81,$4c,$84,$4b,$87,$c4,$01,$81,$40
+	.db $80,$36,$84,$3b,$83,$36,$87,$b7,$01,$81,$34,$84,$2c,$87,$aa,$01
+	.db $81,$28,$80,$35,$84,$1c,$83,$35,$87,$9d,$01,$81,$1c,$84,$0d,$87
+	.db $90,$01,$81,$10,$85,$02,$84,$fd,$87,$83,$01,$81,$04,$80,$34,$84
+	.db $ee,$83,$34,$87,$76,$01,$82,$00,$81,$f8,$84,$de,$87,$69,$01,$81
+	.db $ec,$80,$33,$84,$cf,$83,$33,$87,$5c,$01,$81,$e0,$84,$bf,$87,$4f
+	.db $01,$81,$d4,$80,$32,$84,$b0,$83,$32,$87,$42,$01,$81,$c8,$84,$a0
+	.db $87,$35,$01,$81,$bc,$84,$91,$87,$28,$01,$81,$b0,$80,$31,$84,$81
+	.db $83,$31,$87,$1b,$01,$81,$a4,$84,$72,$87,$0e,$01,$81,$98,$84,$62
+	.db $87,$01,$01,$81,$8e,$84,$5c,$87,$f9,$88,$02,$01,$80,$30,$83,$30
+	.db $86,$80,$7f,$7f,$7f,$7f,$0d,$82,$01,$81,$fb,$80,$32,$01,$00
 .sfx_ntsc_crumble:
 	.db $8a,$0d,$89,$3e,$03,$8a,$0f,$04,$8a,$0d,$03,$8a,$0f,$89,$3d,$03
 	.db $8a,$0d,$89,$3c,$04,$8a,$0f,$89,$3a,$03,$8a,$0d,$03,$8a,$0f,$89
@@ -5836,7 +5842,7 @@ sounds:
 	.db $8a,$0b,$89,$38,$01,$8a,$0a,$01,$8a,$09,$01,$8a,$08,$01,$8a,$07
 	.db $01,$8a,$06,$01,$8a,$05,$01,$00
 .sfx_ntsc_land:
-	.db $8a,$0c,$89,$35,$02,$89,$f0,$03,$89,$32,$03,$00
+	.db $8a,$0c,$89,$34,$02,$89,$f0,$03,$89,$31,$03,$00
 .sfx_ntsc_shock:
 	.db $8a,$04,$89,$38,$02,$8a,$07,$03,$8a,$04,$03,$8a,$06,$02,$8a,$04
 	.db $02,$8a,$0a,$03,$8a,$04,$03,$8a,$07,$02,$8a,$04,$02,$8a,$06,$03
@@ -5896,13 +5902,6 @@ sounds:
 	.db $81,$ee,$02,$81,$ef,$02,$81,$f0,$02,$81,$f1,$01,$80,$32,$01,$81
 	.db $f2,$02,$81,$f3,$02,$81,$f4,$02,$81,$f5,$01,$80,$31,$01,$81,$f6
 	.db $02,$81,$f7,$02,$81,$f8,$02,$81,$f9,$01,$00
-.sfx_ntsc_backflip:
-	.db $8a,$07,$89,$32,$01,$8a,$04,$89,$36,$01,$8a,$03,$02,$89,$f0,$01
-	.db $8a,$08,$89,$39,$01,$8a,$05,$89,$3c,$01,$8a,$04,$02,$89,$f0,$01
-	.db $8a,$0a,$89,$37,$01,$8a,$06,$89,$3a,$01,$8a,$05,$02,$89,$f0,$01
-	.db $8a,$0b,$89,$35,$01,$8a,$08,$89,$39,$01,$8a,$07,$02,$89,$f0,$01
-	.db $8a,$0d,$89,$34,$01,$8a,$0a,$89,$37,$01,$8a,$09,$02,$89,$f0,$01
-	.db $8a,$0f,$89,$32,$01,$8a,$0c,$89,$35,$01,$8a,$0b,$01,$00
 .sfx_ntsc_victory:
 	.db $82,$00,$81,$bd,$80,$3f,$89,$f0,$05,$81,$fd,$05,$81,$bd,$05,$81
 	.db $96,$05,$81,$7e,$85,$00,$84,$fd,$83,$35,$05,$81,$96,$84,$bd,$05
@@ -5914,6 +5913,14 @@ sounds:
 	.db $7e,$05,$84,$5e,$05,$00
 .sfx_ntsc_flip_monkey:
 	.db $8a,$06,$01,$89,$31,$02,$89,$32,$01,$89,$33,$01,$00
+.sfx_ntsc_peek:
+	.db $87,$94,$88,$00,$86,$8f,$89,$f0,$01,$87,$93,$01,$87,$91,$01,$87
+	.db $90,$01,$87,$8e,$01,$87,$8d,$01,$87,$8b,$01,$87,$8a,$01,$87,$88
+	.db $01,$87,$87,$01,$87,$85,$01,$87,$84,$01,$87,$82,$01,$87,$81,$01
+	.db $87,$7f,$01,$87,$7e,$01,$87,$7c,$01,$87,$7b,$01,$87,$79,$01,$87
+	.db $78,$01,$87,$76,$01,$87,$75,$01,$87,$73,$01,$87,$72,$01,$87,$70
+	.db $01,$87,$6f,$01,$87,$6d,$01,$87,$6c,$01,$87,$6a,$02,$00
+
 titletiles:
 	
 	.db $9c, $9c, $9c, $9c, $9c, $9c, $9c, $9c, $9c, $9c, $9c, $9c, $9c, $9c, $9c, $9c, $9c, $9c, $9c, $9c, $9c, $9c, $9c, $9c, $9c, $9c, $9c, $9c, $9c, $9c, $9c, $9c
@@ -6641,24 +6648,24 @@ c4m0 = $01a3
 c4t2 = (240 / 2) - 4
 c4c4 = 157
 m3 = 9
-f2 = 19
+f2 = 18
 f0 = 3
 m7 = 13
 m4 = 10
 s1 = 15
 d0 = 2
-v0 = 18
+v0 = 17
 m0 = 6
 l0 = 4
 b8 = 0
 c1 = 14
 f1 = 16
 m5 = 11
-b9 = 17
 m1 = 7
 m6 = 12
 s0 = 5
 m2 = 8
+p0 = 19
 c0 = 1
 b7 = %01000000
 m8b2 = %00000010
@@ -6801,11 +6808,11 @@ g0h0 = 50
 b2 = %00000010
 o2 = o0+ 2
 b6 = %00100000
-p1 .rs 1
-b10 .rs 1
-p0 .rs 1
-c2 .rs 1
 p2 .rs 1
+b9 .rs 1
+p1 .rs 1
+c2 .rs 1
+p3 .rs 1
 s2 .rs 2
 s3 .rs 2
 c4t0 .rs 1
