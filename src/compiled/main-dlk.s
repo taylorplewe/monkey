@@ -422,6 +422,12 @@ d1Update:
 	lda <b9
 	and #b1
 	bne .front
+	lda <m8b8+1
+	and #m8b5
+	bne .front
+	lda <m8b8+2
+	and #m8b5
+	bne .front
 	lda <c4v0
 	beq .b4
 		.front:
@@ -6200,7 +6206,7 @@ s4scenarios_easy:
 			.db 80
 			.db 80, 80, 0, o4t11
 			.db 88, 8, 1, o4f0
-			.db 150, 116, 8, o4s2
+			.db 150, 148, 10, o4s2
 			.db 96, 0, 0, o4t12
 			.db 88, 8, 1, o4f0
 			.db 142, 16, 0, o4t2
@@ -6464,7 +6470,7 @@ s4scenarios_hard:
 			.dw .7_1, .7_2, .7_3
 		.7_addrsend:
 		.7_1:
-			.db 57
+			.db 10
 			.db 16, 80, 0, o4s6
 			.db 182, 40, 2, o4n1
 			.db 64, 100, 2, o4n1

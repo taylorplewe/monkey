@@ -330,6 +330,12 @@ Update:
 	lda g.boolParty
 	and #g.BOOLS_MONKEYINFRONT
 	bne .front
+	lda monkey.bools+1
+	and #monkey.BOOLS_OFFSCR
+	bne .front
+	lda monkey.bools+2
+	and #monkey.BOOLS_OFFSCR
+	bne .front
 	lda ctrl.victorind
 	beq >
 		.front:

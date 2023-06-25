@@ -175,7 +175,7 @@ scenarios_easy:
 			.db 80
 			.db 80, 80, 0, obj.TYPES.THORN_L_FLIP
 			.db 88, 8, 1, obj.TYPES.FLIP
-			.db 150, 116, 8, obj.TYPES.SPDUP
+			.db 150, 148, 10, obj.TYPES.SPDUP
 			.db 96, 0, 0, obj.TYPES.THORN_R_FLIP
 			.db 88, 8, 1, obj.TYPES.FLIP
 			.db 142, 16, 0, obj.TYPES.THORN_TOP
@@ -441,7 +441,7 @@ scenarios_hard:
 			.dw .7_1, .7_2, .7_3
 		.7_addrsend:
 		.7_1:
-			.db 57
+			.db 10
 			.db 16, 80, 0, obj.TYPES.SPIKE_UR
 			.db 182, 40, 2, obj.TYPES.NORMAL
 			.db 64, 100, 2, obj.TYPES.NORMAL
