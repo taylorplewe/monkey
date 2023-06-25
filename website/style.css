@@ -46,13 +46,12 @@ a {
 	margin: 0;
 }
 .imgs-1 {
-	text-align: center;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 16px;
 }
 .imgs-1 img {
-	width: 80%;
-}
-.imgs-1 :not(:first-child) {
-	margin-top: 16px;
+	width: 100%;
 }
 video {
 	background: black;
@@ -70,5 +69,9 @@ hr {
 	main {
 		width: initial;
 		padding: 0 16px;
+	}
+	.imgs-1 {
+		grid-template-columns: 80%;
+		justify-content: center;
 	}
 }
