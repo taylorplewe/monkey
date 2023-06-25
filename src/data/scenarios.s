@@ -229,13 +229,13 @@ scenarios_easy:
 			.db 176, 8, 1, obj.TYPES.FLIP
 		.7_4:
 			.db 124
-			.db 64, 100, 1, obj.TYPES.BOUNCE
+			.db 64, 116, 2, obj.TYPES.BOUNCE
 			.db 56, 34, 0, obj.TYPES.THORN
-			.db 64, 50, 1, obj.TYPES.BOUNCE
+			.db 64, 66, 2, obj.TYPES.BOUNCE
 			.db 56, 34, 0, obj.TYPES.THORN
-			.db 64, 50, 1, obj.TYPES.BOUNCE
+			.db 64, 66, 2, obj.TYPES.BOUNCE
 			.db 56, 34, 0, obj.TYPES.THORN
-			.db 64, 50, 1, obj.TYPES.BOUNCE
+			.db 64, 66, 2, obj.TYPES.BOUNCE
 		.7_5:
 			.db 124
 			.db 64, 88, 0, obj.TYPES.CRUMBLE0
