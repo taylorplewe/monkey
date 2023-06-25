@@ -2422,7 +2422,15 @@ SD_monkey:
 
 SD_monkeys:
 	ldx #1
-	lda #0
+	lda g.boolParty
+	and #g.BOOLS_MULTIPLAYER
+	beq .1p
+	;2p:
+		lda #0
+		beq .1pst ; jmp
+	.1p:
+		lda ctrl.m1p
+	.1pst:
 	sta SD_monkey.attr
 	jsr SD_monkey
 	lda g.boolParty
@@ -2479,8 +2487,14 @@ SD_monkeyTails:
 			cpx #2
 			beq .pal2
 			;pal1:
-				lda #0
-				beq .palst
+				lda g.boolParty
+				and #g.BOOLS_MULTIPLAYER
+				beq .1p
+				;2p:
+					lda #0
+					beq .palst ; jmp
+				.1p:
+					lda ctrl.m1p
 			.pal2:
 				lda ctrl.m2p
 			.palst:

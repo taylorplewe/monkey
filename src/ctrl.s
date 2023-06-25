@@ -341,7 +341,8 @@ const TCF_CTR_AMT 128
 const TCF_L _tcfe - _tcf
 tcf = $01a0
 tcf_ctr = $01a1
-const m2p $01a3
+const m1p $01a3
+const m2p $01a4
 thomas_c_farraday:
 	lda tcf
 	cmp #$ff
@@ -374,6 +375,7 @@ thomas_c_farraday:
 			sta tcf
 			lda #2
 			sta m2p
+			sta m1p
 			jsr .f
 			jsr disp.BuffAllWhite
 			jsr .f

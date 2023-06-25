@@ -2080,7 +2080,7 @@ d1SD_monkey:
 			lda #0
 			beq .arrowpalst
 		.arrowpal2:
-			lda c4m0
+			lda c4m1
 		.arrowpalst:
 		sta o2, y
 		lda <m8x0, x
@@ -2279,7 +2279,14 @@ d1SD_monkey:
 	rts
 d1SD_monkeys:
 	ldx #1
-	lda #0
+	lda <b9
+	and #b6
+	beq .1p
+		lda #0
+		beq .1pst 
+	.1p:
+		lda c4m0
+	.1pst:
 	sta <d1SD_monkeya0
 	jsr d1SD_monkey
 	lda <b9
@@ -2288,7 +2295,7 @@ d1SD_monkeys:
 		rts
 	.b0:
 	ldx #2
-	lda c4m0
+	lda c4m1
 	sta <d1SD_monkeya0
 	jmp d1SD_monkey
 d1SD_monkeyTails:
@@ -2326,10 +2333,15 @@ d1SD_monkeyTails:
 		sta o2, y
 			cpx #2
 			beq .pal2
-				lda #0
-				beq .palst
+				lda <b9
+				and #b6
+				beq .1p
+					lda #0
+					beq .palst 
+				.1p:
+					lda c4m0
 			.pal2:
-				lda c4m0
+				lda c4m1
 			.palst:
 		ora o2, y
 		sta o2, y
@@ -4369,7 +4381,7 @@ c4InitTitle:
 	lda #$ff
 	sta <c4s0
 	lda #3
-	sta c4m0
+	sta c4m1
 	rts
 c4InitGame:
 	lda <b9
@@ -4684,6 +4696,7 @@ c4thomas_c_farraday:
 			lda #$ff
 			sta tcf
 			lda #2
+			sta c4m1
 			sta c4m0
 			jsr .f
 			jsr d1BuffAllWhite
@@ -6689,6 +6702,7 @@ c4t3 = 167
 c4c5 = 255
 c4c3 = 80
 c4m0 = $01a3
+c4m1 = $01a4
 c4t2 = (240 / 2) - 4
 c4c4 = 157
 m3 = 9
