@@ -188,17 +188,17 @@ scenarios_easy:
 			.db 220, 32, 0, obj.TYPES.THORN_R
 			.db 212, 0, 0, obj.TYPES.NORMAL
 		.6_4:
-			.db 48
-			.db 60, 88, 0, obj.TYPES.UP
-			.db 116, 120, 0, obj.TYPES.THORN
-			.db 190, 120, 0, obj.TYPES.DOWN
-			.db 116, 20, 0, obj.TYPES.THORN
-			.db 60, 20, 0, obj.TYPES.UP
-			.db 116, 80, 0, obj.TYPES.THORN
+			.db 20
+			.db 110, 88, 0, obj.TYPES.BOUNCE
+			.db 44, 50, 0, obj.TYPES.CRUMBLE0
+			.db 182, 0, 0, obj.TYPES.CRUMBLE0
+			.db 52, 36, 0, obj.TYPES.SPIKE_R
+			.db 44, 36, 0, obj.TYPES.CRUMBLE0
+			.db 182, 0, 0, obj.TYPES.CRUMBLE0
 	.7:
 		.db (.7_addrsend - .7_addrs) / 2
 		.7_addrs:
-			.dw .7_1, .7_2, .7_3
+			.dw .7_1, .7_2, .7_3, .7_4, .7_5
 		.7_addrsend:
 		.7_1:
 			.db 20
@@ -227,6 +227,24 @@ scenarios_easy:
 			.db 60, 8, 1, obj.TYPES.FLIP
 			.db 168, 70, 0, obj.TYPES.THORN_L_FLIP
 			.db 176, 8, 1, obj.TYPES.FLIP
+		.7_4:
+			.db 124
+			.db 64, 100, 1, obj.TYPES.BOUNCE
+			.db 56, 34, 0, obj.TYPES.THORN
+			.db 64, 50, 1, obj.TYPES.BOUNCE
+			.db 56, 34, 0, obj.TYPES.THORN
+			.db 64, 50, 1, obj.TYPES.BOUNCE
+			.db 56, 34, 0, obj.TYPES.THORN
+			.db 64, 50, 1, obj.TYPES.BOUNCE
+		.7_5:
+			.db 124
+			.db 64, 88, 0, obj.TYPES.CRUMBLE0
+			.db 64, 112, 5, obj.TYPES.SPDUP
+			.db 56, 24, 0, obj.TYPES.THORN_TOP
+			.db 64, 104, 5, obj.TYPES.SPDUP
+			.db 56, 24, 0, obj.TYPES.THORN_TOP
+			.db 64, 104, 5, obj.TYPES.SPDUP
+			.db 56, 24, 0, obj.TYPES.THORN_TOP
 	.8:
 		.db (.8_addrsend - .8_addrs) / 2
 		.8_addrs:
@@ -264,14 +282,14 @@ scenarios_easy:
 			.db 128, 58, 1, obj.TYPES.SPDDOWN
 		.8_4:
 			.db 60
-			.db 48, 88, 0, obj.TYPES.NORMAL
-			.db 56, 0, 0, obj.TYPES.THORN_R
-			.db 148, 0, 0, obj.TYPES.NORMAL
+			.db 56, 88, 0, obj.TYPES.THORN_R
+			.db 48, 0, 0, obj.TYPES.NORMAL
 			.db 140, 0, 0, obj.TYPES.THORN_L
-			.db 48, 100, 0, obj.TYPES.NORMAL
-			.db 40, 0, 0, obj.TYPES.THORN_L
 			.db 148, 0, 0, obj.TYPES.NORMAL
+			.db 40, 100, 0, obj.TYPES.THORN_L
+			.db 48, 0, 0, obj.TYPES.NORMAL
 			.db 156, 0, 0, obj.TYPES.THORN_R
+			.db 148, 0, 0, obj.TYPES.NORMAL
 
 scenarios_hard:
 	; organized by # objs
@@ -383,7 +401,7 @@ scenarios_hard:
 	.6:
 		.db (.6_addrsend - .6_addrs) / 2
 		.6_addrs:
-			.dw .6_1, .6_2, .6_3
+			.dw .6_1, .6_2, .6_3, .6_4
 		.6_addrsend:
 		.6_1:
 			.db 70
@@ -409,6 +427,14 @@ scenarios_hard:
 			.db 122, 0, 0, obj.TYPES.NORMAL
 			.db 40, 12, 0, obj.TYPES.THORN_R
 			.db 32, 0, 0, obj.TYPES.NORMAL
+		.6_4:
+			.db 48
+			.db 60, 88, 0, obj.TYPES.UP
+			.db 116, 120, 0, obj.TYPES.THORN
+			.db 190, 120, 0, obj.TYPES.DOWN
+			.db 116, 20, 0, obj.TYPES.THORN
+			.db 60, 20, 0, obj.TYPES.UP
+			.db 116, 90, 0, obj.TYPES.THORN
 	.7:
 		.db (.7_addrsend - .7_addrs) / 2
 		.7_addrs:

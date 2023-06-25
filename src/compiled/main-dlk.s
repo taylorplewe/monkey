@@ -2016,7 +2016,7 @@ d1sky_cols:
 	.db $31, $32, $33, $34, $35, $36, $26
 d1sky_cols_end:
 d1sky_col_levels:
-	.db 9,  29,  59,  89, 138, 174, 199
+	.db 9,  29,  59,  89, 127, 152, 179
 d1UpdateSkyColor:
 	ldx d1s5
 	cpx #d1n1
@@ -4106,9 +4106,11 @@ g0Generate:
 	lda <g0s0
 	cmp #9
 	bcc .b1
-		lda #8 
+		lda #6 
+		jmp .JJJ
 	.b1:
 	jsr c3ModRandomNum
+	.JJJ:
 	pha
 	asl a
 	tay
@@ -6213,17 +6215,17 @@ s4scenarios_easy:
 			.db 220, 32, 0, o4t4
 			.db 212, 0, 0, o4n1
 		.6_4:
-			.db 48
-			.db 60, 88, 0, o4u2
-			.db 116, 120, 0, o4t1
-			.db 190, 120, 0, o4d1
-			.db 116, 20, 0, o4t1
-			.db 60, 20, 0, o4u2
-			.db 116, 80, 0, o4t1
+			.db 20
+			.db 110, 88, 0, o4b0
+			.db 44, 50, 0, o4c0
+			.db 182, 0, 0, o4c0
+			.db 52, 36, 0, o4s5
+			.db 44, 36, 0, o4c0
+			.db 182, 0, 0, o4c0
 	.7:
 		.db (.7_addrsend - .7_addrs) / 2
 		.7_addrs:
-			.dw .7_1, .7_2, .7_3
+			.dw .7_5
 		.7_addrsend:
 		.7_1:
 			.db 20
@@ -6252,6 +6254,24 @@ s4scenarios_easy:
 			.db 60, 8, 1, o4f0
 			.db 168, 70, 0, o4t11
 			.db 176, 8, 1, o4f0
+		.7_4:
+			.db 124
+			.db 64, 100, 1, o4b0
+			.db 56, 34, 0, o4t1
+			.db 64, 50, 1, o4b0
+			.db 56, 34, 0, o4t1
+			.db 64, 50, 1, o4b0
+			.db 56, 34, 0, o4t1
+			.db 64, 50, 1, o4b0
+		.7_5:
+			.db 124
+			.db 64, 88, 0, o4c0
+			.db 64, 112, 5, o4s2
+			.db 56, 24, 0, o4t2
+			.db 64, 104, 5, o4s2
+			.db 56, 24, 0, o4t2
+			.db 64, 104, 5, o4s2
+			.db 56, 24, 0, o4t2
 	.8:
 		.db (.8_addrsend - .8_addrs) / 2
 		.8_addrs:
@@ -6289,14 +6309,14 @@ s4scenarios_easy:
 			.db 128, 58, 1, o4s1
 		.8_4:
 			.db 60
-			.db 48, 88, 0, o4n1
-			.db 56, 0, 0, o4t4
-			.db 148, 0, 0, o4n1
+			.db 56, 88, 0, o4t4
+			.db 48, 0, 0, o4n1
 			.db 140, 0, 0, o4t3
-			.db 48, 100, 0, o4n1
-			.db 40, 0, 0, o4t3
 			.db 148, 0, 0, o4n1
+			.db 40, 100, 0, o4t3
+			.db 48, 0, 0, o4n1
 			.db 156, 0, 0, o4t4
+			.db 148, 0, 0, o4n1
 s4scenarios_hard:
 	.dw s4shared1scenarios, .2, .3, .4, .5, .6, .7, .8
 	.2:
@@ -6406,7 +6426,7 @@ s4scenarios_hard:
 	.6:
 		.db (.6_addrsend - .6_addrs) / 2
 		.6_addrs:
-			.dw .6_1, .6_2, .6_3
+			.dw .6_1, .6_2, .6_3, .6_4
 		.6_addrsend:
 		.6_1:
 			.db 70
@@ -6432,6 +6452,14 @@ s4scenarios_hard:
 			.db 122, 0, 0, o4n1
 			.db 40, 12, 0, o4t4
 			.db 32, 0, 0, o4n1
+		.6_4:
+			.db 48
+			.db 60, 88, 0, o4u2
+			.db 116, 120, 0, o4t1
+			.db 190, 120, 0, o4d1
+			.db 116, 20, 0, o4t1
+			.db 60, 20, 0, o4u2
+			.db 116, 90, 0, o4t1
 	.7:
 		.db (.7_addrsend - .7_addrs) / 2
 		.7_addrs:

@@ -2128,7 +2128,7 @@ sky_cols:
 	.db $31, $32, $33, $34, $35, $36, $26
 sky_cols_end:
 sky_col_levels:
-	.db 9,  29,  59,  89, 138, 174, 199
+	.db 9,  29,  59,  89, 127, 152, 179
 const NUM_SKY_COLS sky_cols_end - sky_cols
 const sky_col_ind $01a8
 UpdateSkyColor:
