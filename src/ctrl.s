@@ -335,7 +335,13 @@ Peek:
 
 ; top secret, don't look
 _tcf:
-	.dw $0202, $0101, $0102, $0102
+	.dw $0202
+	ora [$01, x]
+	.db $02
+	ora [$02, x]
+	.db 1
+	;.dw $0202, $0101, $0102, $0102
+	;.db 02, 02, 01, 01, 02, 01, 02, 01
 _tcfe:
 const TCF_CTR_AMT 128
 const TCF_L _tcfe - _tcf

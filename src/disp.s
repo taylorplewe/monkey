@@ -2208,8 +2208,15 @@ SD_monkey:
 		cpx #2
 		beq .arrowpal2
 		;arrowpal1:
-			lda #0
-			beq .arrowpalst
+			lda g.boolParty
+			and #g.BOOLS_MULTIPLAYER
+			beq .1p
+			;2p:
+				lda #0
+				beq .arrowpalst ; jmp
+			.1p:
+				lda ctrl.m1p
+				bpl .arrowpalst ; jmp
 		.arrowpal2:
 			lda ctrl.m2p
 		.arrowpalst:

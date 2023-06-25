@@ -2077,8 +2077,14 @@ d1SD_monkey:
 		sta o0, y
 		cpx #2
 		beq .arrowpal2
-			lda #0
-			beq .arrowpalst
+			lda <b9
+			and #b6
+			beq .1p
+				lda #0
+				beq .arrowpalst 
+			.1p:
+				lda c4m0
+				bpl .arrowpalst 
 		.arrowpal2:
 			lda c4m1
 		.arrowpalst:
@@ -4663,7 +4669,11 @@ c4Peek:
 	bne .end
 	.end: rts
 _tcf:
-	.dw $0202, $0101, $0102, $0102
+	.dw $0202
+	ora [$01, x]
+	.db $02
+	ora [$02, x]
+	.db 1
 _tcfe:
 tcf = $01a0
 tcf_ctr = $01a1
