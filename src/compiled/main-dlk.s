@@ -4106,11 +4106,9 @@ g0Generate:
 	lda <g0s0
 	cmp #9
 	bcc .b1
-		lda #6 
-		jmp .JJJ
+		lda #8 
 	.b1:
 	jsr c3ModRandomNum
-	.JJJ:
 	pha
 	asl a
 	tay
@@ -6057,7 +6055,7 @@ s4shared1scenarios:
 		.db 52, 80, 0, o4b0
 	.1_7:
 		.db 144
-		.db 52, 150, 0, o4d1
+		.db 52, 164, 0, o4d1
 s4scenarios_easy:
 	.dw s4shared1scenarios, .2, .3, .4, .5, .6, .7, .8
 	.2:
@@ -6225,7 +6223,7 @@ s4scenarios_easy:
 	.7:
 		.db (.7_addrsend - .7_addrs) / 2
 		.7_addrs:
-			.dw .7_5
+			.dw .7_1, .7_2, .7_3, .7_4, .7_5
 		.7_addrsend:
 		.7_1:
 			.db 20

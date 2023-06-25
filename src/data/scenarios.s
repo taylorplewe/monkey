@@ -28,7 +28,7 @@ shared1scenarios:
 		.db 52, 80, 0, obj.TYPES.BOUNCE
 	.1_7:
 		.db 144
-		.db 52, 150, 0, obj.TYPES.DOWN
+		.db 52, 164, 0, obj.TYPES.DOWN
 	
 scenarios_easy:
 	; organized by # objs
