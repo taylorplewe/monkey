@@ -64,6 +64,18 @@ hr {
 	border-right-width: 0;
 	border-left-width: 0;
 }
+.hardware {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 16px;
+	margin: 1em 0;
+}
+.hardware p {
+	margin: 0;
+}
+.hardware img {
+	width: 100%;
+}
 
 @media (max-width: 720px) {
 	main {
@@ -73,5 +85,13 @@ hr {
 	.imgs-1 {
 		grid-template-columns: 80%;
 		justify-content: center;
+	}
+	.hardware {
+		grid-template-columns: 100%;
+		justify-content: center;
+	}
+	.hardware img {
+		width: 50%;
+		margin: auto;
 	}
 }
