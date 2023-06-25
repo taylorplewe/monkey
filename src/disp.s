@@ -2502,6 +2502,7 @@ SD_monkeyTails:
 					beq .palst ; jmp
 				.1p:
 					lda ctrl.m1p
+					bpl .palst
 			.pal2:
 				lda ctrl.m2p
 			.palst:

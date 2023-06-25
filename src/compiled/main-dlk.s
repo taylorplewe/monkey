@@ -2346,6 +2346,7 @@ d1SD_monkeyTails:
 					beq .palst 
 				.1p:
 					lda c4m0
+					bpl .palst
 			.pal2:
 				lda c4m1
 			.palst:
@@ -6252,7 +6253,7 @@ s4scenarios_easy:
 	.7:
 		.db (.7_addrsend - .7_addrs) / 2
 		.7_addrs:
-			.dw .7_4
+			.dw .7_1, .7_2, .7_3, .7_4, .7_5
 		.7_addrsend:
 		.7_1:
 			.db 20
