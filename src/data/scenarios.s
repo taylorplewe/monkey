@@ -388,7 +388,7 @@ scenarios_hard:
 			.db 1
 			.db 148, 150, 0, obj.TYPES.THORN_R_DR
 			.db 140, 0, 0, obj.TYPES.DOWNRIGHT
-			.db 32, 60, 0, obj.TYPES.BOUNCE
+			.db 32, 96, 2, obj.TYPES.BOUNCE
 			.db 110, 0, 0, obj.TYPES.SPIKE_UL
 			.db 140, 68, 1, obj.TYPES.NORMAL
 		.5_4:
