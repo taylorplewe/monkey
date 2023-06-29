@@ -438,7 +438,7 @@ scenarios_hard:
 	.7:
 		.db (.7_addrsend - .7_addrs) / 2
 		.7_addrs:
-			.dw .7_1
+			.dw .7_1, .7_2, .7_3
 		.7_addrsend:
 		.7_1:
 			.db 10
