@@ -438,7 +438,7 @@ scenarios_hard:
 	.7:
 		.db (.7_addrsend - .7_addrs) / 2
 		.7_addrs:
-			.dw .7_1, .7_2, .7_3
+			.dw .7_1
 		.7_addrsend:
 		.7_1:
 			.db 10
@@ -447,8 +447,8 @@ scenarios_hard:
 			.db 64, 100, 2, obj.TYPES.NORMAL
 			.db 16, 40, 0, obj.TYPES.SPIKE_R
 			.db 64, 72, 2, obj.TYPES.NORMAL
-			.db 160, 70, 1, obj.TYPES.NORMAL
-			.db 16, 48, 0, obj.TYPES.SPIKE_DR
+			.db 160, 118, 4, obj.TYPES.NORMAL
+			.db 16, 0, 0, obj.TYPES.SPIKE_DR
 		.7_2:
 			.db 60
 			.db 128, 88, 0, obj.TYPES.BOUNCE

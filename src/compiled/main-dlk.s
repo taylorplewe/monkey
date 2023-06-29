@@ -6491,7 +6491,7 @@ s4scenarios_hard:
 	.7:
 		.db (.7_addrsend - .7_addrs) / 2
 		.7_addrs:
-			.dw .7_1, .7_2, .7_3
+			.dw .7_1
 		.7_addrsend:
 		.7_1:
 			.db 10
@@ -6500,8 +6500,8 @@ s4scenarios_hard:
 			.db 64, 100, 2, o4n1
 			.db 16, 40, 0, o4s5
 			.db 64, 72, 2, o4n1
-			.db 160, 70, 1, o4n1
-			.db 16, 48, 0, o4s4
+			.db 160, 118, 4, o4n1
+			.db 16, 0, 0, o4s4
 		.7_2:
 			.db 60
 			.db 128, 88, 0, o4b0
