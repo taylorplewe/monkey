@@ -6433,7 +6433,7 @@ s4scenarios_hard:
 	.6:
 		.db (.6_addrsend - .6_addrs) / 2
 		.6_addrs:
-			.dw .6_1, .6_2, .6_3, .6_4
+			.dw .6_1, .6_2, .6_3
 		.6_addrsend:
 		.6_1:
 			.db 70
@@ -6459,18 +6459,10 @@ s4scenarios_hard:
 			.db 122, 0, 0, o4n1
 			.db 40, 12, 0, o4t4
 			.db 32, 0, 0, o4n1
-		.6_4:
-			.db 48
-			.db 60, 88, 0, o4u2
-			.db 116, 120, 0, o4t1
-			.db 190, 120, 0, o4d1
-			.db 116, 20, 0, o4t1
-			.db 60, 20, 0, o4u2
-			.db 116, 90, 0, o4t1
 	.7:
 		.db (.7_addrsend - .7_addrs) / 2
 		.7_addrs:
-			.dw .7_1, .7_2, .7_3
+			.dw .7_1, .7_2, .7_3, .7_4
 		.7_addrsend:
 		.7_1:
 			.db 10
@@ -6499,6 +6491,15 @@ s4scenarios_hard:
 			.db 52, 64, 1, o4b0
 			.db 148, 64, 1, o4n1
 			.db 52, 0, 0, o4s4
+		.7_4:
+			.db 48
+			.db 60, 88, 0, o4u2
+			.db 116, 120, 0, o4t1
+			.db 190, 120, 0, o4d1
+			.db 116, 20, 0, o4t1
+			.db 60, 20, 0, o4u2
+			.db 116, 90, 0, o4t1
+			.db 124, 38, 0, o4b0
 	.8:
 		.db (.8_addrsend - .8_addrs) / 2
 		.8_addrs:
