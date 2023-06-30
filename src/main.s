@@ -327,6 +327,7 @@ gamepals:
 sdaddrs:
 	.dw disp.SD_norm			; normal
 	.dw disp.SD_norm			; downright
+	.dw disp.SD_norm			; downleft
 	.dw disp.SD_norm			; upright
 	.dw disp.SD_norm			; upleft
 	.dw disp.SD_norm			; down

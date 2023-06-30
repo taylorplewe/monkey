@@ -12,6 +12,7 @@ const TYPE		objs + 4
 idset TYPES {
 	NORMAL
 	DOWNRIGHT
+	DOWNLEFT
 	UPRIGHT
 	UPLEFT
 	DOWN
@@ -52,6 +53,7 @@ idset TYPES {
 update_vectors:
 	.dw nix ; NORMAL
 	.dw MvmtDownRight ; DOWNRIGHT
+	.dw MvmtDownLeft ; DOWNLEFT
 	.dw MvmtUpRight ; UPRIGHT
 	.dw MvmtUpLeft ; UPLEFT
 	.dw MvmtDown ; DOWN
@@ -212,6 +214,11 @@ Update:
 
 	ldx #0
 	.loop:
+		lda STOREY, x
+		bne >
+			jmp .next
+		>
+
 		lda X, x
 		sta oldX
 		lda Y, x

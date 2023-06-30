@@ -3616,6 +3616,7 @@ i0Read:
 o4update_vectors:
 	.dw o4nix 
 	.dw o4MvmtDownRight 
+	.dw o4MvmtDownLeft 
 	.dw o4MvmtUpRight 
 	.dw o4MvmtUpLeft 
 	.dw o4MvmtDown 
@@ -3743,6 +3744,10 @@ o4Update:
 	sta <o4b4
 	ldx #0
 	.loop:
+		lda o4s0, x
+		bne .b2
+			jmp .next
+		.b2:
 		lda o4x0, x
 		sta <o4o2
 		lda o4y0, x
@@ -3761,11 +3766,11 @@ o4Update:
 		jsr o4UpdateJump
 		lda o4x0, x
 		cmp <o4o2
-		bne .b2
+		bne .b3
 			lda o4y0, x
 			cmp <o4o3
 			beq .next
-		.b2:
+		.b3:
 		txa
 		tay
 		ldx #1
@@ -3786,13 +3791,13 @@ o4Update:
 					pha
 					lda <m8t0, x
 					cmp #$ff
-					beq .b3
+					beq .b4
 						pla
 						pha
 						clc
 						adc <m8t0, x
 						sta <m8t0, x
-					.b3:
+					.b4:
 					pla
 					clc
 					adc <m8x0, x
@@ -4298,7 +4303,7 @@ g0ApplyXOffset:
 g0ApplyYOffset:
 	sta <g0ApplyYOffsetn0
 	lda o4t0, x
-	cmp #o4d1
+	cmp #o4d2
 	beq .d
 	cmp #o4d0
 	beq .d
@@ -6064,7 +6069,7 @@ s4shared1scenarios:
 		.db 52, 80, 0, o4b0
 	.1_7:
 		.db 144
-		.db 52, 164, 0, o4d1
+		.db 52, 164, 0, o4d2
 s4scenarios_easy:
 	.dw s4shared1scenarios, .2, .3, .4, .5, .6, .7, .8
 	.2:
@@ -6334,7 +6339,7 @@ s4scenarios_hard:
 		.2_1:
 			.db 80
 			.db 90, 120, 0, o4t1
-			.db 98, 38, 0, o4d1
+			.db 98, 38, 0, o4d2
 		.2_2:
 			.db 70
 			.db 150, 88, 0, o4l0
@@ -6389,7 +6394,7 @@ s4scenarios_hard:
 			.db 60
 			.db 52, 88, 0, o4u2
 			.db 160, 154, 1, o4b0
-			.db 52, 180, 0, o4d1
+			.db 52, 180, 0, o4d2
 			.db 160, 88, 0, o4c0
 		.4_4:
 			.db 40
@@ -6495,7 +6500,7 @@ s4scenarios_hard:
 			.db 48
 			.db 60, 88, 0, o4u2
 			.db 116, 120, 0, o4t1
-			.db 190, 120, 0, o4d1
+			.db 190, 120, 0, o4d2
 			.db 116, 20, 0, o4t1
 			.db 60, 20, 0, o4u2
 			.db 116, 90, 0, o4t1
@@ -6556,6 +6561,7 @@ gamepals:
 	.db $21, $0d, $21, $20
 	.db $21, $0d, $16, $37
 sdaddrs:
+	.dw d1SD_norm			
 	.dw d1SD_norm			
 	.dw d1SD_norm			
 	.dw d1SD_norm			
@@ -6756,43 +6762,44 @@ o4t13 = 32
 o4o0 = 5
 o4b1 = 6
 o4m0 = 64
-o4u2 = 5
-o4u1 = 3
-o4u0 = 2
-o4s5 = 21
-o4f0 = 11
-o4t5 = 29
-o4s7 = 23
-o4t7 = 31
-o4t11 = 35
-o4c1 = 14
-o4t8 = 32
-o4s2 = 9
-o4c6 = 19
-o4t12 = 36
-o4t9 = 33
-o4s8 = 24
-o4t4 = 28
-o4t3 = 27
-o4s4 = 20
-o4d1 = 4
-o4c2 = 15
-o4t10 = 34
-o4s6 = 22
-o4b0 = 12
-o4t1 = 25
-o4c3 = 16
-o4r0 = 6
-o4t2 = 26
-o4l0 = 7
-o4s3 = 10
-o4c4 = 17
+o4d1 = 2
+o4u2 = 6
+o4u1 = 4
+o4u0 = 3
+o4s5 = 22
+o4f0 = 12
+o4t5 = 30
+o4s7 = 24
+o4t7 = 32
+o4t11 = 36
+o4c1 = 15
+o4t8 = 33
+o4s2 = 10
+o4c6 = 20
+o4t12 = 37
+o4t9 = 34
+o4s8 = 25
+o4t4 = 29
+o4t3 = 28
+o4s4 = 21
+o4d2 = 5
+o4c2 = 16
+o4t10 = 35
+o4s6 = 23
+o4b0 = 13
+o4t1 = 26
+o4c3 = 17
+o4r0 = 7
+o4t2 = 27
+o4l0 = 8
+o4s3 = 11
+o4c4 = 18
 o4n1 = 0
-o4t6 = 30
+o4t6 = 31
 o4d0 = 1
-o4c0 = 13
-o4s1 = 8
-o4c5 = 18
+o4c0 = 14
+o4s1 = 9
+o4c5 = 19
 o4n2 = 24
 o4o1 .rs 120
 o4n0 = o4o1+ 2
