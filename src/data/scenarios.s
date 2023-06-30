@@ -84,8 +84,8 @@ scenarios_easy:
 		.3_3:
 			.db 1
 			.db 210, 255, 10, obj.TYPES.NORMAL
-			.db 120, 0, 10, obj.TYPES.NORMAL
 			.db 30, 0, 10, obj.TYPES.NORMAL
+			.db 120, 0, 10, obj.TYPES.NORMAL
 		.3_4:
 			.db 80
 			.db 52, 88, 0, obj.TYPES.UPRIGHT
@@ -462,11 +462,11 @@ scenarios_hard:
 		.7_4:
 			.db 48
 			.db 60, 88, 0, obj.TYPES.UP
-			.db 116, 120, 0, obj.TYPES.THORN
-			.db 190, 120, 0, obj.TYPES.DOWN
+			.db 116, 96, 0, obj.TYPES.THORN
+			.db 190, 96, 0, obj.TYPES.DOWN
 			.db 116, 20, 0, obj.TYPES.THORN
 			.db 60, 20, 0, obj.TYPES.UP
-			.db 116, 90, 0, obj.TYPES.THORN
+			.db 116, 106, 0, obj.TYPES.THORN
 			.db 124, 38, 0, obj.TYPES.BOUNCE
 	.8:
 		.db (.8_addrsend - .8_addrs) / 2
@@ -479,7 +479,7 @@ scenarios_hard:
 			.db 152, 24, 0, obj.TYPES.THORN_TOP
 			.db 90, 80, 0, obj.TYPES.THORN_L_FLIP
 			.db 98, 8, 1, obj.TYPES.FLIP
-			.db 20, 116, 8, obj.TYPES.SPDUP
+			.db 20, 180, 12, obj.TYPES.SPDUP
 			.db 106, 0, 0, obj.TYPES.THORN_R_FLIP
 			.db 98, 8, 1, obj.TYPES.FLIP
 			.db 12, 16, 0, obj.TYPES.THORN_TOP

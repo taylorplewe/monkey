@@ -32,7 +32,9 @@ idset TYPES {
 	CRUMBLE5
 	CRUMBLE6
 	SPIKE_DR
+	SPIKE_DL
 	SPIKE_R
+	SPIKE_L
 	SPIKE_UR
 	SPIKE_UL
 	SPIKE_D
@@ -41,11 +43,17 @@ idset TYPES {
 	THORN_L
 	THORN_R
 	THORN_R_R
+	THORN_L_R
 	THORN_R_L
+	THORN_L_L
 	THORN_L_DR
 	THORN_R_DR
+	THORN_L_DL
+	THORN_R_DL
 	THORN_L_UR
 	THORN_R_UR
+	THORN_L_UL
+	THORN_R_UL
 	THORN_L_FLIP ; only flip thorns after this
 	THORN_R_FLIP
 }
@@ -73,7 +81,9 @@ update_vectors:
 	.dw UpdateCrumbly ; CRUMBLE5
 	.dw UpdateCrumbly ; CRUMBLE6
 	.dw MvmtDownRight ; SPIKE_DR
+	.dw MvmtDownLeft ; SPIKE_DL
 	.dw MvmtRight ; SPIKE_R
+	.dw MvmtLeft ; SPIKE_L
 	.dw MvmtUpRight ; SPIKE_UR
 	.dw MvmtUpLeft ; SPIKE_UL
 	.dw MvmtDown ; SPIKE_D
@@ -82,13 +92,117 @@ update_vectors:
 	.dw nix ; THORN_L
 	.dw nix ; THORN_R
 	.dw MvmtRight ; THORN_R_R
+	.dw MvmtRight ; THORN_L_R
 	.dw MvmtLeft ; THORN_R_L
+	.dw MvmtLeft ; THORN_L_L
 	.dw MvmtDownRight ; THORN_L_DR
 	.dw MvmtDownRight ; THORN_R_DR
+	.dw MvmtDownLeft ; THORN_L_DL
+	.dw MvmtDownLeft ; THORN_R_DL
 	.dw MvmtUpRight ; THORN_L_UR
 	.dw MvmtUpRight ; THORN_R_UR
+	.dw MvmtUpLeft ; THORN_L_UL
+	.dw MvmtUpLeft ; THORN_R_UL
 	.dw FlipThorn ; THORN_L_FLIP ; only flip thorns after this
 	.dw FlipThorn ; THORN_R_FLIP
+
+mirrored_types:
+	.db TYPES.NORMAL ; NORMAL
+	.db TYPES.DOWNLEFT ; DOWNRIGHT
+	.db TYPES.DOWNRIGHT ; DOWNLEFT
+	.db TYPES.UPLEFT ; UPRIGHT
+	.db TYPES.UPRIGHT ; UPLEFT
+	.db TYPES.DOWN ; DOWN
+	.db TYPES.UP ; UP
+	.db TYPES.LEFT ; RIGHT
+	.db TYPES.RIGHT ; LEFT
+	.db TYPES.SPDDOWN ; SPDDOWN
+	.db TYPES.SPDUP ; SPDUP
+	.db TYPES.SHOCK ; SHOCK
+	.db TYPES.FLIP ; FLIP ; must come right after shock
+	.db TYPES.BOUNCE ; BOUNCE
+	.db TYPES.CRUMBLE0 ; CRUMBLE0
+	.db TYPES.CRUMBLE1 ; CRUMBLE1
+	.db TYPES.CRUMBLE2 ; CRUMBLE2
+	.db TYPES.CRUMBLE3 ; CRUMBLE3
+	.db TYPES.CRUMBLE4 ; CRUMBLE4
+	.db TYPES.CRUMBLE5 ; CRUMBLE5
+	.db TYPES.CRUMBLE6 ; CRUMBLE6
+	.db TYPES.SPIKE_DL ; SPIKE_DR
+	.db TYPES.SPIKE_DR ; SPIKE_DL
+	.db TYPES.SPIKE_L ; SPIKE_R
+	.db TYPES.SPIKE_R ; SPIKE_L
+	.db TYPES.SPIKE_UL ; SPIKE_UR
+	.db TYPES.SPIKE_UR ; SPIKE_UL
+	.db TYPES.SPIKE_D ; SPIKE_D
+	.db TYPES.THORN ; THORN
+	.db TYPES.THORN_TOP ; THORN_TOP
+	.db TYPES.THORN_R ; THORN_L
+	.db TYPES.THORN_L ; THORN_R
+	.db TYPES.THORN_L_L ; THORN_R_R
+	.db TYPES.THORN_R_L ; THORN_L_R
+	.db TYPES.THORN_L_R ; THORN_R_L
+	.db TYPES.THORN_R_R ; THORN_L_L
+	.db TYPES.THORN_R_DL ; THORN_L_DR
+	.db TYPES.THORN_L_DL ; THORN_R_DR
+	.db TYPES.THORN_R_DR ; THORN_L_DL
+	.db TYPES.THORN_L_DR ; THORN_R_DL
+	.db TYPES.THORN_R_UL ; THORN_L_UR
+	.db TYPES.THORN_L_UL ; THORN_R_UR
+	.db TYPES.THORN_R_UR ; THORN_L_UL
+	.db TYPES.THORN_L_UR ; THORN_R_UL
+	.db TYPES.THORN_R_FLIP ; THORN_L_FLIP ; only flip thorns after this
+	.db TYPES.THORN_L_FLIP ; THORN_R_FLIP
+
+; excess widths beyond 8px wide; for doing mirrored scenarios
+; this can obviously be optimized so come back here if you run out of space
+ex_widths:
+	.db 0 ; NORMAL
+	.db 0 ; DOWNRIGHT
+	.db 0 ; DOWNLEFT
+	.db 0 ; UPRIGHT
+	.db 0 ; UPLEFT
+	.db 0 ; DOWN
+	.db 0 ; UP
+	.db 0 ; RIGHT
+	.db 0 ; LEFT
+	.db 0 ; SPDDOWN
+	.db 0 ; SPDUP
+	.db 0 ; SHOCK
+	.db 0 ; FLIP ; must come right after shock
+	.db 0 ; BOUNCE
+	.db 0 ; CRUMBLE0
+	.db 0 ; CRUMBLE1
+	.db 0 ; CRUMBLE2
+	.db 0 ; CRUMBLE3
+	.db 0 ; CRUMBLE4
+	.db 0 ; CRUMBLE5
+	.db 0 ; CRUMBLE6
+	.db 24 ; SPIKE_DR
+	.db 24 ; SPIKE_DL
+	.db 24 ; SPIKE_R
+	.db 24 ; SPIKE_L
+	.db 24 ; SPIKE_UR
+	.db 24 ; SPIKE_UL
+	.db 24 ; SPIKE_D
+	.db 16 ; THORN
+	.db 16 ; THORN_TOP
+	.db 0 ; THORN_L
+	.db 0 ; THORN_R
+	.db 0 ; THORN_R_R
+	.db 0 ; THORN_L_R
+	.db 0 ; THORN_R_L
+	.db 0 ; THORN_L_L
+	.db 0 ; THORN_L_DR
+	.db 0 ; THORN_R_DR
+	.db 0 ; THORN_L_DL
+	.db 0 ; THORN_R_DL
+	.db 0 ; THORN_L_UR
+	.db 0 ; THORN_R_UR
+	.db 0 ; THORN_L_UL
+	.db 0 ; THORN_R_UL
+	.db 0 ; THORN_L_FLIP ; only flip thorns after this
+	.db 0 ; THORN_R_FLIP
 
 const NUM_OBJS 24
 var [120] objs ; 24 total spots for objects; 12 per loaded half

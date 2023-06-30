@@ -195,6 +195,7 @@ d1DrawNTTilesAndAttrs:
 			bne .tileloop4
 		.attrloop:
 			lda [d1DrawNTTilesAndAttrsd0], y
+			and <d1DrawNTTilesAndAttrsa0
 			sta $2007
 			iny
 			bne .attrloop
@@ -219,6 +220,7 @@ d1InitGame:
 	sta <d1DrawNTTilesAndAttrsd0
 	lda #HIGH(gametiles)
 	sta <d1DrawNTTilesAndAttrsd0+1
+	sty <d1DrawNTTilesAndAttrsa0
 	jsr d1DrawNTTilesAndAttrs
 	ldx #$28
 	ldy #0
@@ -226,6 +228,7 @@ d1InitGame:
 	sta <d1DrawNTTilesAndAttrsd0
 	lda #HIGH(gametiles2)
 	sta <d1DrawNTTilesAndAttrsd0+1
+	sty <d1DrawNTTilesAndAttrsa0
 	jsr d1DrawNTTilesAndAttrs
 	lda #0
 	sta <d1s1
@@ -251,6 +254,8 @@ d1InitTitle:
 	sta <d1DrawNTTilesAndAttrsd0
 	lda #HIGH(titletiles)
 	sta <d1DrawNTTilesAndAttrsd0+1
+	lda #$ff
+	sta <d1DrawNTTilesAndAttrsa0
 	jsr d1DrawNTTilesAndAttrs
 	lda #$ff
 	jsr d1UpdateBasePals
@@ -1135,7 +1140,7 @@ d1sd_thorn_l_flip_tiles:
 	.db $c8|1, 0 	 
 	.db $c4|1, 0 	 
 d1SD_thorn_l_flip:
-	lda <o4t16
+	lda <o4t22
 	cmp #4
 	bcs .b0
 		jmp d1SD_thorn_l_dbl
@@ -1146,9 +1151,9 @@ d1SD_thorn_l_flip:
 	sta <d1SD_thorn_flippinga0+1
 	lda <d1SoftDrawObjsc0
 	sta <d1t3
-	lda <o4t14
+	lda <o4t20
 	sec
-	sbc <o4t15
+	sbc <o4t21
 	cmp #8
 	bcs .b1
 		and #%11111110
@@ -1218,7 +1223,7 @@ d1sd_thorn_r_flip_tiles:
 	.db $ca|1, $c8|1 
 	.db $c6|1, $c4|1 
 d1SD_thorn_r_flip:
-	lda <o4t16
+	lda <o4t22
 	cmp #4
 	bcs .b0
 		jmp d1SD_thorn_r_dbl
@@ -1231,9 +1236,9 @@ d1SD_thorn_r_flip:
 	sec
 	sbc #8
 	sta <d1t3
-	lda <o4t14
+	lda <o4t20
 	sec
-	sbc <o4t15
+	sbc <o4t21
 	cmp #8
 	bcs .b1
 		and #%11111110
@@ -1265,7 +1270,7 @@ d1SD_timer:
 	sec
 	sbc #4
 	sta <d1SD_timerx0
-	lda <o4t16
+	lda <o4t22
 	cmp #4
 	bcs .action
 	jmp .norm
@@ -1279,9 +1284,9 @@ d1SD_timer:
 		.b0:
 		lda <d1d1
 		bpl .shocksoundend
-		lda <o4t14
+		lda <o4t20
 		sec
-		sbc <o4t15
+		sbc <o4t21
 		bne .shocksoundend
 			lda <b9
 			ora #b3
@@ -1400,12 +1405,12 @@ d1SD_timer:
 			lda <d1a0
 			and #%100
 			bne .b2
-				lda <o4t16
+				lda <o4t22
 				clc
 				adc #1
 				bne .noffs 
 			.b2:
-			lda <o4t16
+			lda <o4t22
 		.noffs:
 		asl a
 		asl a 
@@ -1565,9 +1570,9 @@ d1flippingbetweenattrs:
 d1SD_flip:
 	txa
 	pha
-	lda <o4t14
+	lda <o4t20
 	sec
-	sbc <o4t15
+	sbc <o4t21
 	pha
 	cmp #8
 	bcs .straighton
@@ -3087,7 +3092,7 @@ m8CollideWithObjs:
 	.nocrumble:
 	cmp #o4s3
 	bne .shockdieend
-		lda <o4t16
+		lda <o4t22
 		cmp #4
 		bne .shockdieend
 		jmp m8Explode
@@ -3205,7 +3210,7 @@ m8CheckStillOnWall:
 	lda o4t0, x
 	cmp #o4s3
 	bne .b1
-		lda <o4t16
+		lda <o4t22
 		cmp #4
 		bne .end
 		jsr m8Explode
@@ -3215,11 +3220,11 @@ m8CheckStillOnWall:
 		jsr m8Flip
 	.end: rts
 m8Flip:
-	lda <o4t16
+	lda <o4t22
 	cmp #4
 	bne .end
-	lda <o4t15
-	cmp <o4t14
+	lda <o4t21
+	cmp <o4t20
 	bne .end
 	beq m8FlipAction 
 	.end: rts
@@ -3636,7 +3641,9 @@ o4update_vectors:
 	.dw o4UpdateCrumbly 
 	.dw o4UpdateCrumbly 
 	.dw o4MvmtDownRight 
+	.dw o4MvmtDownLeft 
 	.dw o4MvmtRight 
+	.dw o4MvmtLeft 
 	.dw o4MvmtUpRight 
 	.dw o4MvmtUpLeft 
 	.dw o4MvmtDown 
@@ -3645,17 +3652,117 @@ o4update_vectors:
 	.dw o4nix 
 	.dw o4nix 
 	.dw o4MvmtRight 
+	.dw o4MvmtRight 
+	.dw o4MvmtLeft 
 	.dw o4MvmtLeft 
 	.dw o4MvmtDownRight 
 	.dw o4MvmtDownRight 
+	.dw o4MvmtDownLeft 
+	.dw o4MvmtDownLeft 
 	.dw o4MvmtUpRight 
 	.dw o4MvmtUpRight 
+	.dw o4MvmtUpLeft 
+	.dw o4MvmtUpLeft 
 	.dw o4FlipThorn 
 	.dw o4FlipThorn 
+o4mirrored_types:
+	.db o4n1 
+	.db o4d1 
+	.db o4d0 
+	.db o4u1 
+	.db o4u0 
+	.db o4d2 
+	.db o4u2 
+	.db o4l0 
+	.db o4r0 
+	.db o4s1 
+	.db o4s2 
+	.db o4s3 
+	.db o4f0 
+	.db o4b0 
+	.db o4c0 
+	.db o4c1 
+	.db o4c2 
+	.db o4c3 
+	.db o4c4 
+	.db o4c5 
+	.db o4c6 
+	.db o4s5 
+	.db o4s4 
+	.db o4s7 
+	.db o4s6 
+	.db o4s9 
+	.db o4s8 
+	.db o4s10 
+	.db o4t1 
+	.db o4t2 
+	.db o4t4 
+	.db o4t3 
+	.db o4t8 
+	.db o4t7 
+	.db o4t6 
+	.db o4t5 
+	.db o4t12 
+	.db o4t11 
+	.db o4t10 
+	.db o4t9 
+	.db o4t16 
+	.db o4t15 
+	.db o4t14 
+	.db o4t13 
+	.db o4t18 
+	.db o4t17 
+o4ex_widths:
+	.db 0 
+	.db 0 
+	.db 0 
+	.db 0 
+	.db 0 
+	.db 0 
+	.db 0 
+	.db 0 
+	.db 0 
+	.db 0 
+	.db 0 
+	.db 0 
+	.db 0 
+	.db 0 
+	.db 0 
+	.db 0 
+	.db 0 
+	.db 0 
+	.db 0 
+	.db 0 
+	.db 0 
+	.db 24 
+	.db 24 
+	.db 24 
+	.db 24 
+	.db 24 
+	.db 24 
+	.db 24 
+	.db 16 
+	.db 16 
+	.db 0 
+	.db 0 
+	.db 0 
+	.db 0 
+	.db 0 
+	.db 0 
+	.db 0 
+	.db 0 
+	.db 0 
+	.db 0 
+	.db 0 
+	.db 0 
+	.db 0 
+	.db 0 
+	.db 0 
+	.db 0 
 o4Init:
-	lda #o4t13
-	sta <o4t14
-	sta <o4t15
+	lda #o4t19
+	sta <o4t20
+	sta <o4t21
 	lda #o4m0
 	sta <o4m1
 	lda <b9
@@ -3666,7 +3773,7 @@ o4Init:
 	sta <o4b2
 	sta <o4b3
 	sta <o4b4
-	sta <o4t16
+	sta <o4t22
 	sta <o4c7
 	rts
 o4Update:
@@ -3681,18 +3788,18 @@ o4Update:
 		sta <o4m2
 	.b0:
 	inc <o4c7
-	dec <o4t15
+	dec <o4t21
 	bne .b1
-		lda <o4t14
-		sta <o4t15
-		lda <o4t16
+		lda <o4t20
+		sta <o4t21
+		lda <o4t22
 		clc
 		adc #1
 		cmp #5
 		bcc .timerst
 			lda #0
 		.timerst:
-		sta <o4t16
+		sta <o4t22
 	.b1:
 	lda <c2
 	and #11
@@ -4005,16 +4112,16 @@ o4UpdateCrumbly:
 	.b0:
 	.end: rts
 o4FlipThorn:
-	lda <o4t16
+	lda <o4t22
 	cmp #4
 	bne .end
-	lda <o4t14
+	lda <o4t20
 	sec
 	sbc #4
-	cmp <o4t15
+	cmp <o4t21
 	bne .end
 	lda o4t0, x
-	cmp #o4t11
+	cmp #o4t17
 	beq .toR
 		dec o4t0, x
 		lda o4x0, x
@@ -4180,6 +4287,9 @@ g0Generate:
 		sta <g0Generatea0+1
 		pla
 		sta <g0Generatea0
+	jsr c3RandomNum
+	and #1
+	sta <g0Generatem0
 	jsr g0CreateObjs
 	.next:
 	lda <g0s0
@@ -4210,25 +4320,55 @@ g0CreateObjs:
 		lda [g0Generatea0], y
 		sta o4t0, x
 		dey
+			lda <g0Generatem0
+			beq .b0
+				tya
+				pha
+				lda o4t0, x
+				tay
+				lda o4mirrored_types, y
+				sta o4t0, x
+				pla
+				tay
+			.b0:
 		lda [g0Generatea0], y
 		sta o4n0, x
 		dey
 			lda <g0c0
 			sec
 			sbc [g0Generatea0], y
-			bcs .b0
+			bcs .b1
 				inc <g0c1
 				inc <g0CreateObjsm0
 				inc <g0n0
-			.b0:
+			.b1:
 			sta <g0c0
 			jsr g0ApplyYOffset
 			sta o4y0, x
 			dey
 			lda [g0Generatea0], y
+			sta o4x0, x
+				lda <g0Generatem0
+				beq .b2
+					ldy o4t0, x
+					lda #$ff
+					sec
+					sbc o4x0, x
+					sbc o4ex_widths, y
+					sta o4x0, x
+				.b2:
+			lda o4x0, x
 			jsr g0ApplyXOffset
-			clc
-			adc <g0CreateObjsa0
+			sta o4x0, x
+				ldy <g0Generatem0
+				beq .g0CreateObjsa0
+					sec
+					sbc <g0CreateObjsa0
+					jmp .addxend
+				.g0CreateObjsa0:
+					clc
+					adc <g0CreateObjsa0
+				.addxend:
 			sta o4x0, x
 			sta <g0CreateObjsl0
 		lda <g0CreateObjsm0
@@ -4246,47 +4386,36 @@ g0CreateObjs:
 		adc #0
 		sta <g0Generatea0+1
 		dec <g0CreateObjsn0
-		bne .loop
+		beq .b3
+			jmp .loop
+		.b3:
 	lda #0
 	sta <g0g0
 	lda <g0CreateObjsl0
 	cmp #g0t0
-	bcc .b1
+	bcc .b4
 		dec <g0g0
-	.b1:
+		rts
+	.b4:
+	cmp #g0t1
+	bcs .b5
+		dec <g0g0
+	.b5:
 	rts
 g0ApplyXOffset:
 	sta <g0ApplyXOffsetn0
+	txa
+	pha
 	lda o4t0, x
-	cmp #o4r0
-	beq .r
-	cmp #o4t5
-	beq .r
-	cmp #o4l0
-	beq .l
-	cmp #o4u1
-	beq .l
-	cmp #o4t6
-	beq .l
-	cmp #o4s4
-	beq .r
-	cmp #o4s5
-	beq .r
-	cmp #o4s6
-	beq .r
-	cmp #o4s7
-	beq .l
-	cmp #o4t7
-	beq .r
-	cmp #o4d0
-	beq .r
-	cmp #o4t10
-	beq .r
-	cmp #o4t8
-	beq .r
-	cmp #o4u0
-	beq .r
-	bne .nah 
+	asl a
+	tax
+	lda .jumpaddrs, x
+	sta <g0ApplyXOffseta0
+	lda .jumpaddrs+1, x
+	sta <g0ApplyXOffseta0+1
+	pla
+	tax
+	jmp [g0ApplyXOffseta0]
 	.r:
 		lda <g0ApplyXOffsetn0
 		clc
@@ -4300,36 +4429,67 @@ g0ApplyXOffset:
 	.nah:
 	lda <g0ApplyXOffsetn0
 	rts
+	.jumpaddrs:
+		.dw .nah 
+		.dw .r 
+		.dw .l 
+		.dw .r 
+		.dw .l 
+		.dw .nah 
+		.dw .nah 
+		.dw .r 
+		.dw .l 
+		.dw .nah 
+		.dw .nah 
+		.dw .nah 
+		.dw .nah 
+		.dw .nah 
+		.dw .nah 
+		.dw .nah 
+		.dw .nah 
+		.dw .nah 
+		.dw .nah 
+		.dw .nah 
+		.dw .nah 
+		.dw .r 
+		.dw .l 
+		.dw .r 
+		.dw .l 
+		.dw .r 
+		.dw .l 
+		.dw .nah 
+		.dw .nah 
+		.dw .nah 
+		.dw .nah 
+		.dw .nah 
+		.dw .r 
+		.dw .r 
+		.dw .l 
+		.dw .l 
+		.dw .r 
+		.dw .r 
+		.dw .l 
+		.dw .l 
+		.dw .r 
+		.dw .r 
+		.dw .l 
+		.dw .l 
+		.dw .nah 
+		.dw .nah 
 g0ApplyYOffset:
 	sta <g0ApplyYOffsetn0
+	txa
+	pha
 	lda o4t0, x
-	cmp #o4d2
-	beq .d
-	cmp #o4d0
-	beq .d
-	cmp #o4u2
-	beq .u
-	cmp #o4u0
-	beq .u
-	cmp #o4u1
-	beq .u
-	cmp #o4t7
-	beq .d
-	cmp #o4t9
-	beq .u
-	cmp #o4t10
-	beq .u
-	cmp #o4t8
-	beq .d
-	cmp #o4s4
-	beq .d
-	cmp #o4s6
-	beq .u
-	cmp #o4s7
-	beq .u
-	cmp #o4s8
-	beq .d
-	bne .nah 
+	asl a
+	tax
+	lda .jumpaddrs, x
+	sta <g0ApplyYOffseta0
+	lda .jumpaddrs+1, x
+	sta <g0ApplyYOffseta0+1
+	pla
+	tax
+	jmp [g0ApplyYOffseta0]
 	.d:
 		lda <o4b4
 		bmi .dm
@@ -4363,6 +4523,54 @@ g0ApplyYOffset:
 	.nah:
 	lda <g0ApplyYOffsetn0
 	rts
+	.jumpaddrs:
+		.dw .nah 
+		.dw .d 
+		.dw .d 
+		.dw .u 
+		.dw .u 
+		.dw .d 
+		.dw .u 
+		.dw .nah 
+		.dw .nah 
+		.dw .nah 
+		.dw .nah 
+		.dw .nah 
+		.dw .nah 
+		.dw .nah 
+		.dw .nah 
+		.dw .nah 
+		.dw .nah 
+		.dw .nah 
+		.dw .nah 
+		.dw .nah 
+		.dw .nah 
+		.dw .d 
+		.dw .d 
+		.dw .nah 
+		.dw .nah 
+		.dw .u 
+		.dw .u 
+		.dw .d 
+		.dw .nah 
+		.dw .nah 
+		.dw .nah 
+		.dw .nah 
+		.dw .nah 
+		.dw .nah 
+		.dw .nah 
+		.dw .nah 
+		.dw .d 
+		.dw .d 
+		.dw .d 
+		.dw .d 
+		.dw .u 
+		.dw .u 
+		.dw .u 
+		.dw .u 
+		.dw .nah 
+		.dw .nah 
+
 	.bank 1
 	.org $a000
 	
@@ -4592,7 +4800,7 @@ c4IncreaseHexScore:
 		rts
 	.timerspdup:
 		lda #20
-		sta <o4t14
+		sta <o4t20
 		rts
 c4Pause:
 	lda i0b10+1
@@ -6006,8 +6214,6 @@ gametiles:
 	.db $4b, $4b, $4b, $4b, $4b, $4b, $4b, $4b, $4b, $4b, $c0, $c1, $c2, $c2, $c2, $c2, $c2, $c2, $c2, $c2, $c2, $c2, $c2, $c2, $c2, $c2, $c2, $c2, $c6, $c7, $4b, $4b
 	.db $4b, $4b, $4b, $4b, $4b, $4b, $4b, $4b, $4b, $4b, $d0, $d1, $c2, $c2, $c2, $c2, $c2, $c2, $c2, $c2, $c2, $c2, $c2, $c2, $c2, $c2, $c2, $c2, $d6, $d7, $4b, $4b
 	
-	.db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-	.db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 gametiles2:
 	
 	.db $4b, $4b, $4b, $4b, $4b, $4b, $4b, $4b, $4b, $4b, $e0, $e1, $c2, $c2, $c2, $c2, $c2, $c2, $c2, $c2, $c2, $c2, $c2, $c2, $c2, $c2, $c2, $c2, $e6, $e7, $4b, $4b
@@ -6040,8 +6246,6 @@ gametiles2:
 	.db $4b, $4b, $4b, $4b, $4b, $4b, $d0, $d1, $c2, $c2, $c2, $c2, $d2, $d3, $d4, $d5, $c2, $c2, $c2, $c2, $d6, $d7, $4b, $4b, $4b, $4b, $4b, $4b, $4b, $4b, $4b, $4b
 	.db $4b, $4b, $4b, $4b, $4b, $4b, $e0, $e1, $c2, $c2, $c2, $c2, $e2, $e3, $e4, $e5, $c2, $c2, $c2, $c2, $e6, $e7, $4b, $4b, $4b, $4b, $4b, $4b, $4b, $4b, $4b, $4b
 	.db $4b, $4b, $4b, $4b, $4b, $4b, $f0, $f1, $c2, $c2, $c2, $c2, $f2, $f3, $f4, $f5, $c2, $c2, $c2, $c2, $f6, $f7, $4b, $4b, $4b, $4b, $4b, $4b, $4b, $4b, $4b, $4b
-	.db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-	.db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 	
 
 s4safescenario:
@@ -6079,7 +6283,7 @@ s4scenarios_easy:
 		.2_addrsend:
 		.2_1:
 			.db 144
-			.db 60, 80, 0, o4t12
+			.db 60, 80, 0, o4t18
 			.db 52, 8, 1, o4f0
 		.2_2:
 			.db 144
@@ -6123,8 +6327,8 @@ s4scenarios_easy:
 		.3_3:
 			.db 1
 			.db 210, 255, 10, o4n1
-			.db 120, 0, 10, o4n1
 			.db 30, 0, 10, o4n1
+			.db 120, 0, 10, o4n1
 		.3_4:
 			.db 80
 			.db 52, 88, 0, o4u0
@@ -6142,9 +6346,9 @@ s4scenarios_easy:
 		.4_addrsend:
 		.4_1:
 			.db 60
-			.db 80, 100, 0, o4t10
+			.db 80, 100, 0, o4t14
 			.db 72, 0, 0, o4u0
-			.db 80, 255, 0, o4t8
+			.db 80, 255, 0, o4t10
 			.db 72, 0, 0, o4d0
 		.4_2:
 			.db 80
@@ -6154,9 +6358,9 @@ s4scenarios_easy:
 			.db 140, 80, 1, o4s3
 		.4_3:
 			.db 80
-			.db 132, 80, 0, o4t11
+			.db 132, 80, 0, o4t17
 			.db 140, 8, 1, o4f0
-			.db 22, 80, 0, o4t11
+			.db 22, 80, 0, o4t17
 			.db 30, 8, 1, o4f0
 		.4_4:
 			.db 120
@@ -6185,17 +6389,17 @@ s4scenarios_easy:
 			.db 140, 50, 0, o4c0
 		.5_3:
 			.db 40
-			.db 20, 80, 0, o4s6
+			.db 20, 80, 0, o4s8
 			.db 168, 44, 3, o4n1
 			.db 52, 118, 4, o4n1
 			.db 168, 70, 1, o4n1
 			.db 20, 20, 0, o4s4
 		.5_4:
 			.db 144
-			.db 44, 88, 0, o4t11
-			.db 44, 32, 0, o4t11
-			.db 60, 32, 0, o4t12
-			.db 60, 32, 0, o4t12
+			.db 44, 88, 0, o4t17
+			.db 44, 32, 0, o4t17
+			.db 60, 32, 0, o4t18
+			.db 60, 32, 0, o4t18
 			.db 52, 8, 7, o4f0
 	.6:
 		.db (.6_addrsend - .6_addrs) / 2
@@ -6206,16 +6410,16 @@ s4scenarios_easy:
 			.db 40
 			.db 60, 80, 0, o4t5
 			.db 52, 0, 0, o4r0
-			.db 200, 80, 0, o4t6
+			.db 200, 80, 0, o4t7
 			.db 192, 0, 0, o4l0
 			.db 60, 80, 0, o4t5
 			.db 52, 0, 0, o4r0
 		.6_2:
 			.db 80
-			.db 80, 80, 0, o4t11
+			.db 80, 80, 0, o4t17
 			.db 88, 8, 1, o4f0
 			.db 150, 148, 10, o4s2
-			.db 96, 0, 0, o4t12
+			.db 96, 0, 0, o4t18
 			.db 88, 8, 1, o4f0
 			.db 142, 16, 0, o4t2
 		.6_3:
@@ -6231,7 +6435,7 @@ s4scenarios_easy:
 			.db 110, 88, 0, o4b0
 			.db 44, 50, 0, o4c0
 			.db 182, 0, 0, o4c0
-			.db 52, 36, 0, o4s5
+			.db 52, 36, 0, o4s6
 			.db 44, 36, 0, o4c0
 			.db 182, 0, 0, o4c0
 	.7:
@@ -6250,21 +6454,21 @@ s4scenarios_easy:
 			.db 108, 140, 2, o4n1
 		.7_2:
 			.db 144
-			.db 44, 88, 0, o4t11
-			.db 44, 32, 0, o4t11
-			.db 44, 32, 0, o4t11
-			.db 60, 32, 0, o4t12
-			.db 60, 32, 0, o4t12
-			.db 60, 32, 0, o4t12
+			.db 44, 88, 0, o4t17
+			.db 44, 32, 0, o4t17
+			.db 44, 32, 0, o4t17
+			.db 60, 32, 0, o4t18
+			.db 60, 32, 0, o4t18
+			.db 60, 32, 0, o4t18
 			.db 52, 8, 11, o4f0
 		.7_3:
 			.db 50
-			.db 52, 88, 0, o4t11
+			.db 52, 88, 0, o4t17
 			.db 60, 8, 1, o4f0
 			.db 176, 70, 1, o4n1
-			.db 68, 70, 0, o4t12
+			.db 68, 70, 0, o4t18
 			.db 60, 8, 1, o4f0
-			.db 168, 70, 0, o4t11
+			.db 168, 70, 0, o4t17
 			.db 176, 8, 1, o4f0
 		.7_4:
 			.db 124
@@ -6291,13 +6495,13 @@ s4scenarios_easy:
 		.8_addrsend:
 		.8_1:
 			.db 80
-			.db 132, 80, 0, o4t11
+			.db 132, 80, 0, o4t17
 			.db 140, 8, 1, o4f0
-			.db 22, 80, 0, o4t11
+			.db 22, 80, 0, o4t17
 			.db 30, 8, 1, o4f0
-			.db 132, 80, 0, o4t11
+			.db 132, 80, 0, o4t17
 			.db 140, 8, 1, o4f0
-			.db 22, 80, 0, o4t11
+			.db 22, 80, 0, o4t17
 			.db 30, 8, 1, o4f0
 		.8_2:
 			.db 40
@@ -6343,7 +6547,7 @@ s4scenarios_hard:
 		.2_2:
 			.db 70
 			.db 150, 88, 0, o4l0
-			.db 52, 0, 0, o4s5
+			.db 52, 0, 0, o4s6
 		.2_3:
 			.db 70
 			.db 52, 88, 0, o4r0
@@ -6360,8 +6564,8 @@ s4scenarios_hard:
 			.db 60, 40, 11, o4s1
 		.3_2:
 			.db 144
-			.db 52, 90, 0, o4t11
-			.db 68, 32, 0, o4t12
+			.db 52, 90, 0, o4t17
+			.db 68, 32, 0, o4t18
 			.db 60, 8, 3, o4f0
 		.3_3:
 			.db 100
@@ -6371,7 +6575,7 @@ s4scenarios_hard:
 		.3_4:
 			.db 50
 			.db 170, 88, 1, o4b0
-			.db 60, 1, 0, o4s6
+			.db 60, 1, 0, o4s8
 			.db 52, 106, 1, o4n1
 	.4:
 		.db (.4_addrsend - .4_addrs) / 2
@@ -6382,14 +6586,14 @@ s4scenarios_hard:
 			.db 40
 			.db 180, 80, 0, o4u2
 			.db 88, 140, 1, o4b0
-			.db 20, 40, 0, o4s5
+			.db 20, 40, 0, o4s6
 			.db 88, 136, 6, o4n1
 		.4_2:
 			.db 40
 			.db 42, 88, 0, o4c0
 			.db 170, 48, 0, o4c0
 			.db 42, 48, 0, o4c0
-			.db 98, 16, 0, o4s8
+			.db 98, 16, 0, o4s10
 		.4_3:
 			.db 60
 			.db 52, 88, 0, o4u2
@@ -6410,7 +6614,7 @@ s4scenarios_hard:
 		.5_1:
 			.db 40
 			.db 52, 92, 1, o4n1
-			.db 44, 110, 0, o4t7
+			.db 44, 110, 0, o4t9
 			.db 52, 0, 0, o4d0
 			.db 160, 0, 0, o4t3
 			.db 168, 8, 1, o4n1
@@ -6423,10 +6627,10 @@ s4scenarios_hard:
 			.db 52, 32, 10, o4b0
 		.5_3:
 			.db 1
-			.db 148, 150, 0, o4t8
+			.db 148, 150, 0, o4t10
 			.db 140, 0, 0, o4d0
 			.db 32, 96, 2, o4b0
-			.db 110, 0, 0, o4s7
+			.db 110, 0, 0, o4s9
 			.db 140, 68, 1, o4n1
 		.5_4:
 			.db 40
@@ -6444,16 +6648,16 @@ s4scenarios_hard:
 			.db 70
 			.db 160, 132, 0, o4t3
 			.db 168, 48, 6, o4n1
-			.db 29+8, 0, 0, o4t10
+			.db 29+8, 0, 0, o4t14
 			.db 29, 0, 0, o4u0
-			.db 29+8, 255, 0, o4t8
+			.db 29+8, 255, 0, o4t10
 			.db 29, 0, 0, o4d0
 		.6_2:
 			.db 60
-			.db 60, 190, 0, o4t8
+			.db 60, 190, 0, o4t10
 			.db 52, 0, 0, o4d0
 			.db 100, 88, 0, o4c0
-			.db 60, 88, 0, o4t10
+			.db 60, 88, 0, o4t14
 			.db 52, 0, 0, o4u0
 			.db 160, 160, 0, o4c0
 		.6_3:
@@ -6471,10 +6675,10 @@ s4scenarios_hard:
 		.7_addrsend:
 		.7_1:
 			.db 10
-			.db 16, 80, 0, o4s6
+			.db 16, 80, 0, o4s8
 			.db 182, 40, 2, o4n1
 			.db 64, 100, 2, o4n1
-			.db 16, 40, 0, o4s5
+			.db 16, 40, 0, o4s6
 			.db 64, 72, 2, o4n1
 			.db 160, 118, 4, o4n1
 			.db 16, 0, 0, o4s4
@@ -6499,11 +6703,11 @@ s4scenarios_hard:
 		.7_4:
 			.db 48
 			.db 60, 88, 0, o4u2
-			.db 116, 120, 0, o4t1
-			.db 190, 120, 0, o4d2
+			.db 116, 96, 0, o4t1
+			.db 190, 96, 0, o4d2
 			.db 116, 20, 0, o4t1
 			.db 60, 20, 0, o4u2
-			.db 116, 90, 0, o4t1
+			.db 116, 106, 0, o4t1
 			.db 124, 38, 0, o4b0
 	.8:
 		.db (.8_addrsend - .8_addrs) / 2
@@ -6514,10 +6718,10 @@ s4scenarios_hard:
 			.db 20
 			.db 160, 112, 2, o4s2
 			.db 152, 24, 0, o4t2
-			.db 90, 80, 0, o4t11
+			.db 90, 80, 0, o4t17
 			.db 98, 8, 1, o4f0
-			.db 20, 116, 8, o4s2
-			.db 106, 0, 0, o4t12
+			.db 20, 180, 12, o4s2
+			.db 106, 0, 0, o4t18
 			.db 98, 8, 1, o4f0
 			.db 12, 16, 0, o4t2
 		.8_2:
@@ -6525,7 +6729,7 @@ s4scenarios_hard:
 			.db 60, 88, 0, o4t4
 			.db 52, 0, 0, o4n1
 			.db 150, 69, 0, o4b0
-			.db 60, 70, 0, o4t12
+			.db 60, 70, 0, o4t18
 			.db 52, 8, 1, o4f0
 			.db 150, 60, 0, o4n1
 			.db 68, 24, 0, o4t4
@@ -6587,11 +6791,19 @@ sdaddrs:
 	.dw d1SD_spike			
 	.dw d1SD_spike			
 	.dw d1SD_spike			
+	.dw d1SD_spike			
+	.dw d1SD_spike			
 	.dw d1SD_thorn			
 	.dw d1SD_thorn			
 	.dw d1SD_thorn_l_dbl		
 	.dw d1SD_thorn_r_dbl		
 	.dw d1SD_thorn_r_dbl		
+	.dw d1SD_thorn_l_dbl		
+	.dw d1SD_thorn_r_dbl		
+	.dw d1SD_thorn_l_dbl		
+	.dw d1SD_thorn_l_dbl		
+	.dw d1SD_thorn_r_dbl		
+	.dw d1SD_thorn_l_dbl		
 	.dw d1SD_thorn_r_dbl		
 	.dw d1SD_thorn_l_dbl		
 	.dw d1SD_thorn_r_dbl		
@@ -6610,6 +6822,7 @@ sdaddrs:
 d1SetPalettesp0 .rs 2
 	.rsset 0
 d1DrawNTTilesAndAttrsd0 .rs 2
+d1DrawNTTilesAndAttrsa0 .rs 1
 	.rsset 0
 d1UpdateBasePalsa0 .rs 2
 	.rsset 0
@@ -6681,17 +6894,20 @@ d1SD_timerx0 .rs 1
 d1SD_timern0 .rs 1
 d1SD_timery0 .rs 1
 	.rsset 0
+g0ApplyYOffseta0 .rs 2
 g0ApplyYOffsetn0 .rs 1
 	.rsset 0
 g0ApplyXOffsetn0 .rs 1
-	.rsset 2
+g0ApplyXOffseta0 .rs 2
+	.rsset 3
 g0CreateObjsa0 .rs 1
 g0CreateObjsn0 .rs 1
 g0CreateObjsl0 .rs 1
 g0CreateObjsm0 .rs 1
-	.rsset 6
+	.rsset 7
 g0Generatea0 .rs 2
-	.rsset 8
+g0Generatem0 .rs 1
+	.rsset 10
 b5 = %00010000
 c4t5 = _tcfe- _tcf
 c4c2 = 120 - (16 + 16 + 3)
@@ -6758,7 +6974,7 @@ f4b4 = f4b0+ 3
 f4e4 = f4e0+ 1
 f4b3 = f4b0+ 2
 b1 = %00000001
-o4t13 = 32
+o4t19 = 32
 o4o0 = 5
 o4b1 = 6
 o4m0 = 64
@@ -6766,37 +6982,45 @@ o4d1 = 2
 o4u2 = 6
 o4u1 = 4
 o4u0 = 3
-o4s5 = 22
+o4s6 = 23
 o4f0 = 12
-o4t5 = 30
-o4s7 = 24
-o4t7 = 32
-o4t11 = 36
+o4t5 = 32
+o4s9 = 26
+o4t6 = 33
+o4t9 = 36
+o4t16 = 43
+o4t17 = 44
 o4c1 = 15
-o4t8 = 33
+o4t10 = 37
 o4s2 = 10
 o4c6 = 20
-o4t12 = 37
-o4t9 = 34
-o4s8 = 25
-o4t4 = 29
-o4t3 = 28
+o4t18 = 45
+o4t13 = 40
+o4s10 = 27
+o4t4 = 31
+o4t3 = 30
+o4t15 = 42
 o4s4 = 21
 o4d2 = 5
 o4c2 = 16
-o4t10 = 35
-o4s6 = 23
+o4t14 = 41
+o4s8 = 25
 o4b0 = 13
-o4t1 = 26
+o4t1 = 28
 o4c3 = 17
 o4r0 = 7
-o4t2 = 27
+o4s5 = 22
+o4t2 = 29
 o4l0 = 8
+o4t12 = 39
 o4s3 = 11
 o4c4 = 18
 o4n1 = 0
-o4t6 = 31
+o4t8 = 35
+o4t11 = 38
+o4t7 = 34
 o4d0 = 1
+o4s7 = 24
 o4c0 = 14
 o4s1 = 9
 o4c5 = 19
@@ -6853,13 +7077,14 @@ d1p0 = $0100
 d1s3 = $2b
 d1c3 = 128 - 12
 g0h6 = 200
+g0t1 = 60
 g0h2 = 200
 g0h4 = 52	
 g0o1 = 4
 g0h1 = 120
 g0h5 = 139
 g0n1 = o4n2/ 2
-g0t0 = 190
+g0t0 = 196
 g0h3 = 10
 g0h0 = 50
 b2 = %00000010
@@ -6890,7 +7115,7 @@ m8w1 .rs 3
 m8x1 .rs 3
 m8t1 .rs 3
 m8i2 .rs 3
-o4t16 .rs 1
+o4t22 .rs 1
 o4w0 .rs 1
 o4c7 .rs 1
 o4b4 .rs 1
@@ -6900,8 +7125,8 @@ o4b2 .rs 1
 o4b3 .rs 1
 o4m1 .rs 1
 o4m2 .rs 1
-o4t14 .rs 1
-o4t15 .rs 1
+o4t20 .rs 1
+o4t21 .rs 1
 i0b8 .rs 3
 i0b9 .rs 3
 d1c0 .rs 1

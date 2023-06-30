@@ -30,6 +30,7 @@ var [1] animcounter
 ;	dataaddr - address to tile data (attr data must immediately follow)
 DrawNTTilesAndAttrs:
 	var [2] dataaddr
+	var [1] attrmask ; useful for just doing all 0's for attrs whenever you need to
 	; draw BG tiles
 	stx $2006
 	sty $2006
@@ -53,6 +54,7 @@ DrawNTTilesAndAttrs:
 	; attrs
 		.attrloop:
 			lda [dataaddr], y
+			and attrmask
 			sta $2007
 			iny
 			bne .attrloop
@@ -81,6 +83,7 @@ InitGame:
 	sta DrawNTTilesAndAttrs.dataaddr
 	lda #HIGH(g.gametiles)
 	sta DrawNTTilesAndAttrs.dataaddr+1
+	sty DrawNTTilesAndAttrs.attrmask
 	jsr DrawNTTilesAndAttrs
 
 	ldx #$28
@@ -89,6 +92,7 @@ InitGame:
 	sta DrawNTTilesAndAttrs.dataaddr
 	lda #HIGH(g.gametiles2)
 	sta DrawNTTilesAndAttrs.dataaddr+1
+	sty DrawNTTilesAndAttrs.attrmask
 	jsr DrawNTTilesAndAttrs
 
 	; score
@@ -119,6 +123,8 @@ InitTitle:
 	sta DrawNTTilesAndAttrs.dataaddr
 	lda #HIGH(g.titletiles)
 	sta DrawNTTilesAndAttrs.dataaddr+1
+	lda #$ff
+	sta DrawNTTilesAndAttrs.attrmask
 	jsr DrawNTTilesAndAttrs
 
 	lda #$ff

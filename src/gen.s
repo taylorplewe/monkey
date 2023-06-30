@@ -103,6 +103,7 @@ GenerateWholeHalf:
 
 Generate:
 	var [2] addr
+	var [1] mirrored
 
 	lda gensafe
 	beq >
@@ -188,6 +189,12 @@ Generate:
 		sta addr+1
 		pla
 		sta addr
+
+	; mirrored?
+	jsr comm.RandomNum
+	and #1
+	sta mirrored
+
 	jsr CreateObjs
 
 	.next:
@@ -229,6 +236,18 @@ CreateObjs:
 		lda [Generate.addr], y
 		sta obj.TYPE, x
 		dey
+			; mirrored?
+			lda Generate.mirrored
+			beq >
+				tya
+				pha
+				lda obj.TYPE, x
+				tay
+				lda obj.mirrored_types, y
+				sta obj.TYPE, x
+				pla
+				tay
+			>
 		lda [Generate.addr], y
 		sta obj.NUMSEGS, x
 		dey
@@ -247,9 +266,31 @@ CreateObjs:
 			dey
 		; x
 			lda [Generate.addr], y
+			sta obj.X, x
+				; mirrored?
+				lda Generate.mirrored
+				beq >
+					ldy obj.TYPE, x
+					lda #$ff
+					sec
+					sbc obj.X, x
+					sbc obj.ex_widths, y
+					sta obj.X, x
+				>
+			lda obj.X, x
 			jsr ApplyXOffset
-			clc
-			adc addx
+			sta obj.X, x
+				; mirrored?
+				ldy Generate.mirrored
+				beq .addx
+				;subx:
+					sec
+					sbc addx
+					jmp .addxend
+				.addx:
+					clc
+					adc addx
+				.addxend:
 			sta obj.X, x
 			sta lastx
 		lda mystorey
@@ -267,14 +308,23 @@ CreateObjs:
 		adc #0
 		sta Generate.addr+1
 		dec numobjs
-		bne .loop
-	; if a scenario ends very far to the right & the next one starts to the left, it could be impossible to make the jump; hence the safe scenario which is just a platform moving left to right across screen, bandaid fix but it is what it is
-	const TOO_FAR_RIGHT_X 190
+		beq >
+			jmp .loop
+		>
+		; bne .loop
+	; if a scenario ends very far to the side & the next one starts too far to the other side, it could be impossible to make the jump; hence the safe scenario which is just a platform moving left to right across screen, bandaid fix but it is what it is
+	const TOO_FAR_RIGHT_X 196
+	const TOO_FAR_LEFT_X 60
 	lda #0
 	sta gensafe
 	lda lastx
 	cmp #TOO_FAR_RIGHT_X
 	bcc >
+		dec gensafe
+		rts
+	>
+	cmp #TOO_FAR_LEFT_X
+	bcs >
 		dec gensafe
 	>
 	rts
@@ -285,37 +335,21 @@ CreateObjs:
 ;	a - actual, real, down-to-earth, auTHENtic X value of obj
 ApplyXOffset:
 	var [1] newx
+	var [2] addr
 	sta newx
+	txa
+	pha
 	lda obj.TYPE, x
-	cmp #obj.TYPES.RIGHT
-	beq .r
-	cmp #obj.TYPES.THORN_R_R
-	beq .r
-	cmp #obj.TYPES.LEFT
-	beq .l
-	cmp #obj.TYPES.UPLEFT
-	beq .l
-	cmp #obj.TYPES.THORN_R_L
-	beq .l
-	cmp #obj.TYPES.SPIKE_DR
-	beq .r
-	cmp #obj.TYPES.SPIKE_R
-	beq .r
-	cmp #obj.TYPES.SPIKE_UR
-	beq .r
-	cmp #obj.TYPES.SPIKE_UL
-	beq .l
-	cmp #obj.TYPES.THORN_L_DR
-	beq .r
-	cmp #obj.TYPES.DOWNRIGHT
-	beq .r
-	cmp #obj.TYPES.THORN_R_UR
-	beq .r
-	cmp #obj.TYPES.THORN_R_DR
-	beq .r
-	cmp #obj.TYPES.UPRIGHT
-	beq .r
-	bne .nah ; jmp
+	asl a
+	tax
+	lda .jumpaddrs, x
+	sta addr
+	lda .jumpaddrs+1, x
+	sta addr+1
+	pla
+	tax
+	jmp [addr]
+
 	.r:
 		lda newx
 		clc
@@ -329,6 +363,53 @@ ApplyXOffset:
 	.nah:
 	lda newx
 	rts
+	.jumpaddrs:
+		.dw .nah ; NORMAL
+		.dw .r ; DOWNRIGHT
+		.dw .l ; DOWNLEFT
+		.dw .r ; UPRIGHT
+		.dw .l ; UPLEFT
+		.dw .nah ; DOWN
+		.dw .nah ; UP
+		.dw .r ; RIGHT
+		.dw .l ; LEFT
+		.dw .nah ; SPDDOWN
+		.dw .nah ; SPDUP
+		.dw .nah ; SHOCK
+		.dw .nah ; FLIP ; must come right after shock
+		.dw .nah ; BOUNCE
+		.dw .nah ; CRUMBLE0
+		.dw .nah ; CRUMBLE1
+		.dw .nah ; CRUMBLE2
+		.dw .nah ; CRUMBLE3
+		.dw .nah ; CRUMBLE4
+		.dw .nah ; CRUMBLE5
+		.dw .nah ; CRUMBLE6
+		.dw .r ; SPIKE_DR
+		.dw .l ; SPIKE_DL
+		.dw .r ; SPIKE_R
+		.dw .l ; SPIKE_L
+		.dw .r ; SPIKE_UR
+		.dw .l ; SPIKE_UL
+		.dw .nah ; SPIKE_D
+		.dw .nah ; THORN
+		.dw .nah ; THORN_TOP
+		.dw .nah ; THORN_L
+		.dw .nah ; THORN_R
+		.dw .r ; THORN_R_R
+		.dw .r ; THORN_L_R
+		.dw .l ; THORN_R_L
+		.dw .l ; THORN_L_L
+		.dw .r ; THORN_L_DR
+		.dw .r ; THORN_R_DR
+		.dw .l ; THORN_L_DL
+		.dw .l ; THORN_R_DL
+		.dw .r ; THORN_L_UR
+		.dw .r ; THORN_R_UR
+		.dw .l ; THORN_L_UL
+		.dw .l ; THORN_R_UL
+		.dw .nah ; THORN_L_FLIP ; only flip thorns after this
+		.dw .nah ; THORN_R_FLIP
 
 ; params:
 ;	a - old Y
@@ -336,35 +417,22 @@ ApplyXOffset:
 ;	a - new Y
 ApplyYOffset:
 	var [1] newy
+	var [2] addr
 	sta newy
+
+	txa
+	pha
 	lda obj.TYPE, x
-	cmp #obj.TYPES.DOWN
-	beq .d
-	cmp #obj.TYPES.DOWNRIGHT
-	beq .d
-	cmp #obj.TYPES.UP
-	beq .u
-	cmp #obj.TYPES.UPRIGHT
-	beq .u
-	cmp #obj.TYPES.UPLEFT
-	beq .u
-	cmp #obj.TYPES.THORN_L_DR
-	beq .d
-	cmp #obj.TYPES.THORN_L_UR
-	beq .u
-	cmp #obj.TYPES.THORN_R_UR
-	beq .u
-	cmp #obj.TYPES.THORN_R_DR
-	beq .d
-	cmp #obj.TYPES.SPIKE_DR
-	beq .d
-	cmp #obj.TYPES.SPIKE_UR
-	beq .u
-	cmp #obj.TYPES.SPIKE_UL
-	beq .u
-	cmp #obj.TYPES.SPIKE_D
-	beq .d
-	bne .nah ; jmp
+	asl a
+	tax
+	lda .jumpaddrs, x
+	sta addr
+	lda .jumpaddrs+1, x
+	sta addr+1
+	pla
+	tax
+	jmp [addr]
+
 	.d:
 		lda obj.backForthOffset
 		bmi .dm
@@ -400,3 +468,50 @@ ApplyYOffset:
 	.nah:
 	lda newy
 	rts
+	.jumpaddrs:
+		.dw .nah ; NORMAL
+		.dw .d ; DOWNRIGHT
+		.dw .d ; DOWNLEFT
+		.dw .u ; UPRIGHT
+		.dw .u ; UPLEFT
+		.dw .d ; DOWN
+		.dw .u ; UP
+		.dw .nah ; RIGHT
+		.dw .nah ; LEFT
+		.dw .nah ; SPDDOWN
+		.dw .nah ; SPDUP
+		.dw .nah ; SHOCK
+		.dw .nah ; FLIP ; must come right after shock
+		.dw .nah ; BOUNCE
+		.dw .nah ; CRUMBLE0
+		.dw .nah ; CRUMBLE1
+		.dw .nah ; CRUMBLE2
+		.dw .nah ; CRUMBLE3
+		.dw .nah ; CRUMBLE4
+		.dw .nah ; CRUMBLE5
+		.dw .nah ; CRUMBLE6
+		.dw .d ; SPIKE_DR
+		.dw .d ; SPIKE_DL
+		.dw .nah ; SPIKE_R
+		.dw .nah ; SPIKE_L
+		.dw .u ; SPIKE_UR
+		.dw .u ; SPIKE_UL
+		.dw .d ; SPIKE_D
+		.dw .nah ; THORN
+		.dw .nah ; THORN_TOP
+		.dw .nah ; THORN_L
+		.dw .nah ; THORN_R
+		.dw .nah ; THORN_R_R
+		.dw .nah ; THORN_L_R
+		.dw .nah ; THORN_R_L
+		.dw .nah ; THORN_L_L
+		.dw .d ; THORN_L_DR
+		.dw .d ; THORN_R_DR
+		.dw .d ; THORN_L_DL
+		.dw .d ; THORN_R_DL
+		.dw .u ; THORN_L_UR
+		.dw .u ; THORN_R_UR
+		.dw .u ; THORN_L_UL
+		.dw .u ; THORN_R_UL
+		.dw .nah ; THORN_L_FLIP ; only flip thorns after this
+		.dw .nah ; THORN_R_FLIP

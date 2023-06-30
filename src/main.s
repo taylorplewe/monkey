@@ -286,14 +286,8 @@ titleattrs:
 	.include "src/data/title-attrs.s"
 gametiles:
 	.include "src/data/start-map.s"
-	; attrs
-	.db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-	.db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 gametiles2:
 	.include "src/data/start-map2.s"
-	; attrs
-	.db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-	.db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 	
 	.include "src/data/scenarios.s"
 monkeywordtiles:
@@ -346,8 +340,10 @@ sdaddrs:
 	.dw disp.SD_crumble			; crumble4
 	.dw disp.SD_crumble			; crumble5
 	.dw disp.SD_crumble			; crumble6
-	.dw disp.SD_spike			; spike_dr	
+	.dw disp.SD_spike			; spike_dr
+	.dw disp.SD_spike			; spike_dl
 	.dw disp.SD_spike			; spike_r
+	.dw disp.SD_spike			; spike_l
 	.dw disp.SD_spike			; spike_ur
 	.dw disp.SD_spike			; spike_ul
 	.dw disp.SD_spike			; spike_d
@@ -356,11 +352,17 @@ sdaddrs:
 	.dw disp.SD_thorn_l_dbl		; thorn_l
 	.dw disp.SD_thorn_r_dbl		; thorn_r
 	.dw disp.SD_thorn_r_dbl		; thorn_r_r
+	.dw disp.SD_thorn_l_dbl		; thorn_l_r
 	.dw disp.SD_thorn_r_dbl		; thorn_r_l
+	.dw disp.SD_thorn_l_dbl		; thorn_l_l
 	.dw disp.SD_thorn_l_dbl		; thorn_l_dr
 	.dw disp.SD_thorn_r_dbl		; thorn_r_dr
+	.dw disp.SD_thorn_l_dbl		; thorn_l_dl
+	.dw disp.SD_thorn_r_dbl		; thorn_r_dl
 	.dw disp.SD_thorn_l_dbl		; thorn_l_ur
 	.dw disp.SD_thorn_r_dbl		; thorn_r_ur
+	.dw disp.SD_thorn_l_dbl		; thorn_l_ul
+	.dw disp.SD_thorn_r_dbl		; thorn_r_ul
 	.dw disp.SD_thorn_l_flip	; thorn_l_flip
 	.dw disp.SD_thorn_r_flip	; thorn_r_flip
 
