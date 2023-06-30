@@ -3613,10 +3613,6 @@ i0Read:
 	.end: rts
 	
 
-o4UpdateJump:
-	jmp [o4UpdateJumpa0]
-o4nix:
-	rts
 o4update_vectors:
 	.dw o4nix 
 	.dw o4MvmtDownRight 
@@ -3831,6 +3827,10 @@ o4Update:
 		bcs .end
 		jmp .loop
 	.end: rts
+o4UpdateJump:
+	jmp [o4UpdateJumpa0]
+o4nix:
+	rts
 o4MvmtUp:
 	lda <o4b3
 	bmi .mi

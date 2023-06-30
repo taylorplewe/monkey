@@ -9,51 +9,6 @@ const NUMSEGS	objs + 2
 const STOREY	objs + 3
 const TYPE		objs + 4
 
-UpdateJump:
-	var [2] addr
-	jmp [addr]
-nix:
-	rts
-
-update_vectors:
-	.dw nix ; NORMAL
-	.dw MvmtDownRight ; DOWNRIGHT
-	.dw MvmtUpRight ; UPRIGHT
-	.dw MvmtUpLeft ; UPLEFT
-	.dw MvmtDown ; DOWN
-	.dw MvmtUp ; UP
-	.dw MvmtRight ; RIGHT
-	.dw MvmtLeft ; LEFT
-	.dw nix ; SPDDOWN
-	.dw nix ; SPDUP
-	.dw nix ; SHOCK
-	.dw nix ; FLIP ; must come right after shock
-	.dw nix ; BOUNCE
-	.dw nix ; CRUMBLE0
-	.dw UpdateCrumbly ; CRUMBLE1
-	.dw UpdateCrumbly ; CRUMBLE2
-	.dw UpdateCrumbly ; CRUMBLE3
-	.dw UpdateCrumbly ; CRUMBLE4
-	.dw UpdateCrumbly ; CRUMBLE5
-	.dw UpdateCrumbly ; CRUMBLE6
-	.dw MvmtDownRight ; SPIKE_DR
-	.dw MvmtRight ; SPIKE_R
-	.dw MvmtUpRight ; SPIKE_UR
-	.dw MvmtUpLeft ; SPIKE_UL
-	.dw MvmtDown ; SPIKE_D
-	.dw nix; THORN
-	.dw nix ; THORN_TOP
-	.dw nix ; THORN_L
-	.dw nix ; THORN_R
-	.dw MvmtRight ; THORN_R_R
-	.dw MvmtLeft ; THORN_R_L
-	.dw MvmtDownRight ; THORN_L_DR
-	.dw MvmtDownRight ; THORN_R_DR
-	.dw MvmtUpRight ; THORN_L_UR
-	.dw MvmtUpRight ; THORN_R_UR
-	.dw FlipThorn ; THORN_L_FLIP ; only flip thorns after this
-	.dw FlipThorn ; THORN_R_FLIP
-
 idset TYPES {
 	NORMAL
 	DOWNRIGHT
@@ -93,6 +48,45 @@ idset TYPES {
 	THORN_L_FLIP ; only flip thorns after this
 	THORN_R_FLIP
 }
+
+update_vectors:
+	.dw nix ; NORMAL
+	.dw MvmtDownRight ; DOWNRIGHT
+	.dw MvmtUpRight ; UPRIGHT
+	.dw MvmtUpLeft ; UPLEFT
+	.dw MvmtDown ; DOWN
+	.dw MvmtUp ; UP
+	.dw MvmtRight ; RIGHT
+	.dw MvmtLeft ; LEFT
+	.dw nix ; SPDDOWN
+	.dw nix ; SPDUP
+	.dw nix ; SHOCK
+	.dw nix ; FLIP ; must come right after shock
+	.dw nix ; BOUNCE
+	.dw nix ; CRUMBLE0
+	.dw UpdateCrumbly ; CRUMBLE1
+	.dw UpdateCrumbly ; CRUMBLE2
+	.dw UpdateCrumbly ; CRUMBLE3
+	.dw UpdateCrumbly ; CRUMBLE4
+	.dw UpdateCrumbly ; CRUMBLE5
+	.dw UpdateCrumbly ; CRUMBLE6
+	.dw MvmtDownRight ; SPIKE_DR
+	.dw MvmtRight ; SPIKE_R
+	.dw MvmtUpRight ; SPIKE_UR
+	.dw MvmtUpLeft ; SPIKE_UL
+	.dw MvmtDown ; SPIKE_D
+	.dw nix; THORN
+	.dw nix ; THORN_TOP
+	.dw nix ; THORN_L
+	.dw nix ; THORN_R
+	.dw MvmtRight ; THORN_R_R
+	.dw MvmtLeft ; THORN_R_L
+	.dw MvmtDownRight ; THORN_L_DR
+	.dw MvmtDownRight ; THORN_R_DR
+	.dw MvmtUpRight ; THORN_L_UR
+	.dw MvmtUpRight ; THORN_R_UR
+	.dw FlipThorn ; THORN_L_FLIP ; only flip thorns after this
+	.dw FlipThorn ; THORN_R_FLIP
 
 const NUM_OBJS 24
 var [120] objs ; 24 total spots for objects; 12 per loaded half
@@ -311,6 +305,12 @@ Update:
 		bcs .end
 		jmp .loop
 	.end: rts
+
+UpdateJump:
+	var [2] addr
+	jmp [addr]
+nix:
+	rts
 
 MvmtUp:
 	lda backForthMvmt
