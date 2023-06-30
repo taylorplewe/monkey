@@ -3613,6 +3613,48 @@ i0Read:
 	.end: rts
 	
 
+o4UpdateJump:
+	jmp [o4UpdateJumpa0]
+o4nix:
+	rts
+o4update_vectors:
+	.dw o4nix 
+	.dw o4MvmtDownRight 
+	.dw o4MvmtUpRight 
+	.dw o4MvmtUpLeft 
+	.dw o4MvmtDown 
+	.dw o4MvmtUp 
+	.dw o4MvmtRight 
+	.dw o4MvmtLeft 
+	.dw o4nix 
+	.dw o4nix 
+	.dw o4nix 
+	.dw o4nix 
+	.dw o4nix 
+	.dw o4nix 
+	.dw o4UpdateCrumbly 
+	.dw o4UpdateCrumbly 
+	.dw o4UpdateCrumbly 
+	.dw o4UpdateCrumbly 
+	.dw o4UpdateCrumbly 
+	.dw o4UpdateCrumbly 
+	.dw o4MvmtDownRight 
+	.dw o4MvmtRight 
+	.dw o4MvmtUpRight 
+	.dw o4MvmtUpLeft 
+	.dw o4MvmtDown 
+	.dw o4nix
+	.dw o4nix 
+	.dw o4nix 
+	.dw o4nix 
+	.dw o4MvmtRight 
+	.dw o4MvmtLeft 
+	.dw o4MvmtDownRight 
+	.dw o4MvmtDownRight 
+	.dw o4MvmtUpRight 
+	.dw o4MvmtUpRight 
+	.dw o4FlipThorn 
+	.dw o4FlipThorn 
 o4Init:
 	lda #o4t13
 	sta <o4t14
@@ -3705,92 +3747,29 @@ o4Update:
 	sta <o4b4
 	ldx #0
 	.loop:
-		lda o4s0, x
-		bne .b2
-			jmp .next
-		.b2:
 		lda o4x0, x
 		sta <o4o2
 		lda o4y0, x
 		sta <o4o3
-		lda o4t0, x
-		bne .b3
-			jmp .next
-		.b3:
-		cmp #o4t7
-		beq .downright
-		cmp #o4t8
-		beq .downright
-		cmp #o4t5
-		beq .right
-		cmp #o4t6
-		beq .left
-		cmp #o4d0
-		beq .downright
-		cmp #o4u0
-		beq .upright
-		cmp #o4u1
-		beq .upleft
-		cmp #o4t10
-		beq .upright
-		cmp #o4s4
-		beq .downright
-		cmp #o4s6
-		beq .upright
-		cmp #o4s7
-		beq .upleft
-		cmp #o4d1
-		beq .down
-		cmp #o4u2
-		beq .up
-		cmp #o4r0
-		beq .right
-		cmp #o4l0
-		beq .left
-		cmp #o4s5
-		beq .right
-		cmp #o4s8
-		beq .down
-		cmp #o4c1 
-		bcc .nocrumble
-			cmp #o4c6+1
-			bcs .nocrumble
-			jsr o4UpdateCrumbly
-		.nocrumble:
-		cmp #o4t11
-		bcs .thorn_flip
-		jmp .next 
-		.downright:
-			jsr o4MvmtDownRight
-			jmp .jmpdone
-		.upright:
-			jsr o4MvmtUpRight
-			jmp .jmpdone
-		.upleft:
-			jsr o4MvmtUpLeft
-			jmp .jmpdone
-		.down:
-			jsr o4MvmtDown
-			jmp .jmpdone
-		.up:
-			jsr o4MvmtUp
-			jmp .jmpdone
-		.right:
-			jsr o4MvmtRight
-			jmp .jmpdone
-		.left:
-			jsr o4MvmtLeft
-			jmp .jmpdone
-		.thorn_flip:
-			jsr o4FlipThorn
-		.jmpdone:
+		txa
+		pha
+		lda o4t0, x ; type
+		asl a
+		tax
+		lda o4update_vectors, x
+		sta <o4UpdateJumpa0
+		lda o4update_vectors+1, x
+		sta <o4UpdateJumpa0+1
+		pla
+		tax
+		jsr o4UpdateJump
 		lda o4x0, x
 		cmp <o4o2
-		bne .b4
+		bne .b2
 			lda o4y0, x
 			cmp <o4o3
 			beq .next
-		.b4:
+		.b2:
 		txa
 		tay
 		ldx #1
@@ -3811,13 +3790,13 @@ o4Update:
 					pha
 					lda <m8t0, x
 					cmp #$ff
-					beq .b5
+					beq .b3
 						pla
 						pha
 						clc
 						adc <m8t0, x
 						sta <m8t0, x
-					.b5:
+					.b3:
 					pla
 					clc
 					adc <m8x0, x
@@ -6631,6 +6610,8 @@ c3SpeedToMvmts0 .rs 1
 c3SpeedToMvmtw0 .rs 1
 	.rsset 2
 c3SmoothToTargc0 .rs 1
+	.rsset 0
+o4UpdateJumpa0 .rs 2
 	.rsset 0
 m8CheckStillOnWallo0 .rs 1
 m8CheckStillOnWallo1 .rs 1

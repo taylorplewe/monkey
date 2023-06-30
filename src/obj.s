@@ -9,6 +9,51 @@ const NUMSEGS	objs + 2
 const STOREY	objs + 3
 const TYPE		objs + 4
 
+UpdateJump:
+	var [2] addr
+	jmp [addr]
+nix:
+	rts
+
+update_vectors:
+	.dw nix ; NORMAL
+	.dw MvmtDownRight ; DOWNRIGHT
+	.dw MvmtUpRight ; UPRIGHT
+	.dw MvmtUpLeft ; UPLEFT
+	.dw MvmtDown ; DOWN
+	.dw MvmtUp ; UP
+	.dw MvmtRight ; RIGHT
+	.dw MvmtLeft ; LEFT
+	.dw nix ; SPDDOWN
+	.dw nix ; SPDUP
+	.dw nix ; SHOCK
+	.dw nix ; FLIP ; must come right after shock
+	.dw nix ; BOUNCE
+	.dw nix ; CRUMBLE0
+	.dw UpdateCrumbly ; CRUMBLE1
+	.dw UpdateCrumbly ; CRUMBLE2
+	.dw UpdateCrumbly ; CRUMBLE3
+	.dw UpdateCrumbly ; CRUMBLE4
+	.dw UpdateCrumbly ; CRUMBLE5
+	.dw UpdateCrumbly ; CRUMBLE6
+	.dw MvmtDownRight ; SPIKE_DR
+	.dw MvmtRight ; SPIKE_R
+	.dw MvmtUpRight ; SPIKE_UR
+	.dw MvmtUpLeft ; SPIKE_UL
+	.dw MvmtDown ; SPIKE_D
+	.dw nix; THORN
+	.dw nix ; THORN_TOP
+	.dw nix ; THORN_L
+	.dw nix ; THORN_R
+	.dw MvmtRight ; THORN_R_R
+	.dw MvmtLeft ; THORN_R_L
+	.dw MvmtDownRight ; THORN_L_DR
+	.dw MvmtDownRight ; THORN_R_DR
+	.dw MvmtUpRight ; THORN_L_UR
+	.dw MvmtUpRight ; THORN_R_UR
+	.dw FlipThorn ; THORN_L_FLIP ; only flip thorns after this
+	.dw FlipThorn ; THORN_R_FLIP
+
 idset TYPES {
 	NORMAL
 	DOWNRIGHT
@@ -45,7 +90,7 @@ idset TYPES {
 	THORN_R_DR
 	THORN_L_UR
 	THORN_R_UR
-	THORN_L_FLIP
+	THORN_L_FLIP ; only flip thorns after this
 	THORN_R_FLIP
 }
 
@@ -173,106 +218,24 @@ Update:
 
 	ldx #0
 	.loop:
-		lda STOREY, x
-		bne >
-			jmp .next
-		>
-
 		lda X, x
 		sta oldX
 		lda Y, x
 		sta oldY
 
-		; ↓ is much more bytes but scales slower
-		;  than other way; maybe try again when
-		;  you have way more types of objects
-		; var [2] jmpAddr
-		; txa
-		; pha
-		; lda TYPE, x ; type
-		; asl a
-		; tax
-		; lda .wallTypeMvmtMap, x
-		; sta jmpAddr
-		; lda .wallTypeMvmtMap+1, x
-		; sta jmpAddr+1
-		; pla
-		; tax
-		; jmp [jmpAddr]
-		; .wallTypeMvmtMap:
-		; 	.dw .next, .downright, .down, .up
-
-		lda TYPE, x
-		bne >
-			jmp .next
-		>
-		cmp #TYPES.THORN_L_DR
-		beq .downright
-		cmp #TYPES.THORN_R_DR
-		beq .downright
-		cmp #TYPES.THORN_R_R
-		beq .right
-		cmp #TYPES.THORN_R_L
-		beq .left
-		cmp #TYPES.DOWNRIGHT
-		beq .downright
-		cmp #TYPES.UPRIGHT
-		beq .upright
-		cmp #TYPES.UPLEFT
-		beq .upleft
-		cmp #TYPES.THORN_R_UR
-		beq .upright
-		cmp #TYPES.SPIKE_DR
-		beq .downright
-		cmp #TYPES.SPIKE_UR
-		beq .upright
-		cmp #TYPES.SPIKE_UL
-		beq .upleft
-		cmp #TYPES.DOWN
-		beq .down
-		cmp #TYPES.UP
-		beq .up
-		cmp #TYPES.RIGHT
-		beq .right
-		cmp #TYPES.LEFT
-		beq .left
-		cmp #TYPES.SPIKE_R
-		beq .right
-		cmp #TYPES.SPIKE_D
-		beq .down
-		cmp #TYPES.CRUMBLE1 ; crumble 0 doesn't change until monkey lands on it
-		bcc .nocrumble
-			cmp #TYPES.CRUMBLE6+1
-			bcs .nocrumble
-			jsr UpdateCrumbly
-		.nocrumble:
-		cmp #TYPES.THORN_L_FLIP
-		bcs .thorn_flip
-		jmp .next ; everything else doesn't move
-		.downright:
-			jsr MvmtDownRight
-			jmp .jmpdone
-		.upright:
-			jsr MvmtUpRight
-			jmp .jmpdone
-		.upleft:
-			jsr MvmtUpLeft
-			jmp .jmpdone
-		.down:
-			jsr MvmtDown
-			jmp .jmpdone
-		.up:
-			jsr MvmtUp
-			jmp .jmpdone
-		.right:
-			jsr MvmtRight
-			jmp .jmpdone
-		.left:
-			jsr MvmtLeft
-			jmp .jmpdone
-		.thorn_flip:
-			jsr FlipThorn
-		.jmpdone:
+		; update wall movements
+		txa
+		pha
+		lda TYPE, x ; type
+		asl a
+		tax
+		lda update_vectors, x
+		sta UpdateJump.addr
+		lda update_vectors+1, x
+		sta UpdateJump.addr+1
+		pla
+		tax
+		jsr UpdateJump
 
 		; move monkey
 		lda X, x
