@@ -1903,26 +1903,26 @@ SD_score:
 	const TILE $6c | 1
 	const Y 16
 	var [1] x
-	var [1] sexyx
+	var [1] dumbx
 	; figure out position
 		lda #0
-		sta sexyx
+		sta dumbx
 		ldx #1
 		.posloop:
 			lda score, x
 			bmi .posloopend
-			inc sexyx
+			inc dumbx
 			inx
 			cpx #4
 			bne .posloop
 		.posloopend:
-		lda sexyx
+		lda dumbx
 		asl a
 		asl a
-		sta sexyx
+		sta dumbx
 		lda #124
 		clc
-		adc sexyx
+		adc dumbx
 		sta x
 	ldy oamInd
 	ldx #0
