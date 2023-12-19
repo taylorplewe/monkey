@@ -1986,15 +1986,12 @@ SD_deathSq:
 	sbc #2
 	pha
 		tax
-		; shake it up gay boy! :)
 		cmp #shakesend - shakes
 		bcs .noshake
-			; Am I a Gay Boy?
 			lda shakes, x
 			bne .shakeend ; jmp
 			.noshake:
 			lda #0
-			; No, I'm Not a "Gay Boy"
 		.shakeend:
 		sta xscroll
 	pla
