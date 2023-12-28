@@ -291,6 +291,7 @@ d1UpdateTitle:
 			eor #2
 			sta <d1u0
 	.bobend:
+	jsr c4UpdateTitleSelectAnim
 	lda #d1m0 - 16
 	sta o3 + 4
 	lda #d1o5
@@ -311,7 +312,7 @@ d1UpdateTitle:
 		sta <d1SD_monkeyWordy0
 		lda #2
 		bne .addy1st 
-		.addy1up:
+	.addy1up:
 		lda #d1o4 + 2
 		sta o0 + 4
 		sta <d1SD_monkeyWordy0
@@ -351,6 +352,7 @@ d1UpdateTitle:
 	iny
 	iny
 	jsr d1SD_monkeyWord
+	jsr c4SD_TitleNumbersY
 	.end: rts
 d1SD_monkeyWord:
 	ldx #0
@@ -359,17 +361,33 @@ d1SD_monkeyWord:
 		sta o1, y
 		lda <d1SD_monkeyWorda1
 		sta o2, y
-		txa
-		and #1
-		bne .b0
-			lda <d1SD_monkeyWordy0
-			clc
-			adc <d1SD_monkeyWorda0
-			bne .yst
-		.b0:
-			lda <d1SD_monkeyWordy0
-		.yst:
-		sta o0, y
+		beq .bob
+			lda <c4s0
+			bmi .bob
+				inx
+				lda c4m0, x
+				sta o0, y
+				dex
+				jmp .bobend 
+		.bob:
+			txa
+			and #1
+			bne .b0
+				lda <d1SD_monkeyWordy0
+				clc
+				adc <d1SD_monkeyWorda0
+				bne .yst
+			.b0:
+				lda <d1SD_monkeyWordy0
+			.yst:
+			sta o0, y
+			lda <d1SD_monkeyWorda1
+			beq .bobend
+				inx
+				lda o0, y
+				sta c4m0, x
+				dex
+		.bobend:
 		lda <d1SD_monkeyWordx0
 		sta o3, y
 		clc
@@ -811,9 +829,7 @@ d1SD_speed:
 		lda <d1SoftDrawObjsc1
 		clc
 		adc #8
-		bcc .b0
-			rts
-		.b0:
+		bcs .midend
 		sta o0, y
 		lda <d1SoftDrawObjsc0
 		sta o3, y
@@ -839,7 +855,7 @@ d1SD_speed:
 			iny
 			iny
 			iny
-			rts
+			.midend: rts
 		.top:
 				sta o0, y
 				lda #$f6 | 1
@@ -1817,23 +1833,23 @@ d1IncreaseScore:
 	.end: rts
 d1SD_score:
 		lda #0
-		sta <d1SD_scores0
+		sta <d1SD_scored0
 		ldx #1
 		.posloop:
 			lda <d1s2, x
 			bmi .posloopend
-			inc <d1SD_scores0
+			inc <d1SD_scored0
 			inx
 			cpx #4
 			bne .posloop
 		.posloopend:
-		lda <d1SD_scores0
+		lda <d1SD_scored0
 		asl a
 		asl a
-		sta <d1SD_scores0
+		sta <d1SD_scored0
 		lda #124
 		clc
-		adc <d1SD_scores0
+		adc <d1SD_scored0
 		sta <d1SD_scorex0
 	ldy <d1o3
 	ldx #0
@@ -1874,11 +1890,10 @@ d1SD_deathSq:
 	cmp #$ff
 	beq .end0
 	lda <d1d1
-	bmi .end0
-	cmp #0
 	bne .b0
 		jmp d1BuffAllWhite 
 	.b0:
+	bmi .end0
 	cmp #2
 	bcs .b1
 		.end0: rts
@@ -2088,10 +2103,10 @@ d1SD_monkey:
 				lda #0
 				beq .arrowpalst 
 			.1p:
-				lda c4m0
+				lda c4m3
 				bpl .arrowpalst 
 		.arrowpal2:
-			lda c4m1
+			lda c4m4
 		.arrowpalst:
 		sta o2, y
 		lda <m8x0, x
@@ -2296,7 +2311,7 @@ d1SD_monkeys:
 		lda #0
 		beq .1pst 
 	.1p:
-		lda c4m0
+		lda c4m3
 	.1pst:
 	sta <d1SD_monkeya0
 	jsr d1SD_monkey
@@ -2306,7 +2321,7 @@ d1SD_monkeys:
 		rts
 	.b0:
 	ldx #2
-	lda c4m1
+	lda c4m4
 	sta <d1SD_monkeya0
 	jmp d1SD_monkey
 d1SD_monkeyTails:
@@ -2350,10 +2365,10 @@ d1SD_monkeyTails:
 					lda #0
 					beq .palst 
 				.1p:
-					lda c4m0
+					lda c4m3
 					bpl .palst
 			.pal2:
-				lda c4m1
+				lda c4m4
 			.palst:
 		ora o2, y
 		sta o2, y
@@ -2643,6 +2658,7 @@ d1SD_cloud:
 	.end:
 	sty <d1o3
 	rts
+
 	
 
 m8startx:
@@ -4580,7 +4596,7 @@ c4InitTitle:
 	lda #$ff
 	sta <c4s0
 	lda #3
-	sta c4m1
+	sta c4m4
 	rts
 c4InitGame:
 	lda <b9
@@ -4647,6 +4663,7 @@ c4UpdateTitle:
 	beq c4TitleSpr0
 		lda #64
 		sta <c4s0
+		sta c4m1
 		ldx #FT_SFX_CH0
 		lda #s1
 		jsr f3FamiToneSfxPlay
@@ -4685,6 +4702,61 @@ c4TitleSpr0:
 	lda <p0
 	sta $2000
 	.end: rts
+c4UpdateTitleSelectAnim:
+	lda <c4s0
+	bmi .end
+	ldx #0
+	.animloop:
+		lda c4m2, x
+		bne .next
+		lda c4m1+16, x
+		bne .b0
+			inc c4m1, x
+			lda c4m1, x
+			cmp #4
+			bcc .end 
+			lda #6
+			sta c4m1, x
+			sta c4m1+16, x
+			bne .end 
+		.b0:
+		lda c4m1, x
+		clc
+		adc c4m0, x
+		cmp #16
+		bcs .b1
+			inc c4m2, x
+			lda #$ff
+		.b1:
+		sta c4m0, x
+		lda c4m1+16, x
+		sec
+		sbc #$63
+		sta c4m1+16, x
+		lda c4m1, x
+		sbc #0
+		sta c4m1, x
+		.next:
+		inx
+		cpx #8
+		bcc .animloop
+	.end: rts
+c4SD_TitleNumbersY:
+	lda <b9
+	and #b6 
+	bne .st
+		lda #4
+	.st:
+	tay
+	lda <c4s0
+	bmi .norm
+		lda c4m0
+		sta o0, y
+		rts
+	.norm:
+		lda o0, y
+		sta c4m0
+		rts
 c4UpdateGame:
 	jsr f4UpdateEffects
 	jsr f4UpdateBounces
@@ -4862,11 +4934,7 @@ c4Peek:
 	bne .end
 	.end: rts
 _tcf:
-	.dw $0202
-	ora [$01, x]
-	.db $02
-	ora [$02, x]
-	.db 1
+	.dw $0202, $0101, $0102, $0102
 _tcfe:
 tcf = $01a0
 tcf_ctr = $01a1
@@ -4899,8 +4967,8 @@ c4thomas_c_farraday:
 			lda #$ff
 			sta tcf
 			lda #2
-			sta c4m1
-			sta c4m0
+			sta c4m4
+			sta c4m3
 			jsr .f
 			jsr d1BuffAllWhite
 			jsr .f
@@ -6855,8 +6923,8 @@ m8PlayJumpSoundw0 .rs 1
 	.rsset 0
 d1SD_tie_wordx0 .rs 1
 	.rsset 0
-d1SD_scores0 .rs 1
 d1SD_scorex0 .rs 1
+d1SD_scored0 .rs 1
 	.rsset 0
 d1SD_monkeya1 .rs 1
 d1SD_monkeyx0 .rs 1
@@ -6913,11 +6981,14 @@ c4t5 = _tcfe- _tcf
 c4c2 = 120 - (16 + 16 + 3)
 c4t4 = 128
 c4p0 = $ba
+c4m0 = $0420 
 c4t3 = 167 
+c4m2 = $0450
 c4c5 = 255
 c4c3 = 80
-c4m0 = $01a3
-c4m1 = $01a4
+c4m3 = $01a3
+c4m1 = $0430
+c4m4 = $01a4
 c4t2 = (240 / 2) - 4
 c4c4 = 157
 m3 = 9

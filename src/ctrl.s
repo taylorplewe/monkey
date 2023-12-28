@@ -7,6 +7,11 @@ var [1] tiey ; for displaying the word "TIE!"
 var [1] chasespeed ; screen starts chasing you on higher scores!  Haha,
 var [2] hexscore ; just a hex repr. of display score; easier to do calculations on
 
+; for the animation that runs when user selects a menu option
+const MONKEY_WORD_Y $0420 ; yeh I'm pretty sure I'm out of ZP space
+const MONKEY_WORD_SPEED $0430
+const MONKEY_WORD_DONE $0450
+
 InitTitle:
 	jsr disp.InitTitle
 	lda #$ff
@@ -86,6 +91,7 @@ UpdateTitle:
 		; bne InitGame
 		lda #64
 		sta startctr
+		sta MONKEY_WORD_SPEED
 		ldx #FT_SFX_CH0
 		lda #g.SOUNDS.SELECT
 		jsr ft.FamiToneSfxPlay
@@ -129,6 +135,67 @@ TitleSpr0:
 	sta $2000
 	.end: rts
 
+; after option is selected
+UpdateTitleSelectAnim:
+	lda startctr
+	bmi .end
+	ldx #0
+	.animloop:
+		lda MONKEY_WORD_DONE, x
+		bne .next
+		lda MONKEY_WORD_SPEED+16, x
+		bne >
+			; end of loop
+			inc MONKEY_WORD_SPEED, x
+			lda MONKEY_WORD_SPEED, x
+			cmp #4
+			bcc .end ; jmp
+			lda #6
+			sta MONKEY_WORD_SPEED, x
+			sta MONKEY_WORD_SPEED+16, x
+			bne .end ; jmp
+		>
+		lda MONKEY_WORD_SPEED, x
+		clc
+		adc MONKEY_WORD_Y, x
+		cmp #16
+		bcs >
+			inc MONKEY_WORD_DONE, x
+			lda #$ff
+		>
+		sta MONKEY_WORD_Y, x
+		lda MONKEY_WORD_SPEED+16, x
+		sec
+		sbc #$63
+		sta MONKEY_WORD_SPEED+16, x
+		lda MONKEY_WORD_SPEED, x
+		sbc #0
+		sta MONKEY_WORD_SPEED, x
+		.next:
+		inx
+		cpx #8
+		bcc .animloop
+	.end: rts
+
+; this is here because there's not enough space in the other bank lmao
+; this is extremely last minute
+SD_TitleNumbersY:
+	lda g.boolParty
+	and #g.BOOLS_MULTIPLAYER ; 32
+	bne .st
+		lda #4
+	.st:
+	tay
+	lda startctr
+	bmi .norm
+		lda MONKEY_WORD_Y
+		sta g.OAM_Y, y
+		rts
+	.norm:
+		lda g.OAM_Y, y
+		sta MONKEY_WORD_Y
+		rts
+
 UpdateGame:
 	jsr fx.UpdateEffects
 	jsr fx.UpdateBounces
@@ -156,7 +223,7 @@ UpdateGame:
 	.end: rts
 
 ResetGame:
-	; fade out, restt everything, fade back in
+	; fade out, reset everything, fade back in
 	jsr disp.FadeToWhite
 	jsr InitGame
 	jmp disp.FadeToBase
@@ -335,13 +402,13 @@ Peek:
 
 ; top secret, don't look
 _tcf:
-	.dw $0202
-	ora [$01, x]
-	.db $02
-	ora [$02, x]
-	.db 1
-	;.dw $0202, $0101, $0102, $0102
-	;.db 02, 02, 01, 01, 02, 01, 02, 01
+	; .dw $0202
+	; ora [$01, x]
+	; .db $02
+	; ora [$02, x]
+	; .db 1
+	.dw $0202, $0101, $0102, $0102
+	; .db 02, 02, 01, 01, 02, 01, 02, 01
 _tcfe:
 const TCF_CTR_AMT 128
 const TCF_L _tcfe - _tcf

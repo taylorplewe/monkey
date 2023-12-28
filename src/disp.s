@@ -178,6 +178,8 @@ UpdateTitle:
 			sta upandup
 	.bobend:
 
+	jsr ctrl.UpdateTitleSelectAnim
+
 	; 1
 	lda #MONKEY_X - 16
 	sta g.OAM_X + 4
@@ -194,13 +196,13 @@ UpdateTitle:
 	lda upandup
 	and #1
 	bne .addy1up
-		;addy1down:
+		; addy1down:
 		lda #ONE_Y
 		sta g.OAM_Y + 4
 		sta SD_monkeyWord.y
 		lda #2
 		bne .addy1st ; jmp
-		.addy1up:
+	.addy1up:
 		lda #ONE_Y + 2
 		sta g.OAM_Y + 4
 		sta SD_monkeyWord.y
@@ -225,7 +227,7 @@ UpdateTitle:
 	lda upandup
 	and #2
 	bne .addy2up
-		;addy2down:
+		; addy2down:
 		lda #TWO_Y
 		sta g.OAM_Y, y
 		sta SD_monkeyWord.y
@@ -244,6 +246,8 @@ UpdateTitle:
 	iny
 	jsr SD_monkeyWord
 
+	jsr ctrl.SD_TitleNumbersY
+
 	.end: rts
 
 SD_monkeyWord:
@@ -258,17 +262,33 @@ SD_monkeyWord:
 		sta g.OAM_TILE, y
 		lda attr
 		sta g.OAM_ATTR, y
-		txa
-		and #1
-		bne >
-			lda y
-			clc
-			adc addy
-			bne .yst
-		>
-			lda y
-		.yst:
-		sta g.OAM_Y, y
+		beq .bob
+			lda ctrl.startctr
+			bmi .bob
+				inx
+				lda ctrl.MONKEY_WORD_Y, x
+				sta g.OAM_Y, y
+				dex
+				jmp .bobend ; jmp
+		.bob:
+			txa
+			and #1
+			bne >
+				lda y
+				clc
+				adc addy
+				bne .yst
+			>
+				lda y
+			.yst:
+			sta g.OAM_Y, y
+			lda attr
+			beq .bobend
+				inx
+				lda g.OAM_Y, y
+				sta ctrl.MONKEY_WORD_Y, x
+				dex
+		.bobend:
 		lda x
 		sta g.OAM_X, y
 		clc
@@ -793,9 +813,7 @@ SD_speed:
 		lda SoftDrawObjs.cy
 		clc
 		adc #8
-		bcc >
-			rts
-		>
+		bcs .midend
 		sta g.OAM_Y, y
 		; x doesn't change
 		lda SoftDrawObjs.cx
@@ -823,7 +841,7 @@ SD_speed:
 			iny
 			iny
 			iny
-			rts
+			.midend: rts
 		.top:
 			; do top block first
 				sta g.OAM_Y, y
@@ -1964,11 +1982,10 @@ SD_deathSq:
 	cmp #$ff
 	beq .end0
 	lda deathCtr
-	bmi .end0
-	cmp #0
 	bne >
 		jmp BuffAllWhite ; jsr, rts
 	>
+	bmi .end0
 	cmp #2
 	bcs >
 		.end0: rts
