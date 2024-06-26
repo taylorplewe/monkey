@@ -6,7 +6,7 @@ NES port of the [Wall Kickers mobile game](http://wallkickers.com/)
 
 Download: [monkey.nes](https://raw.githubusercontent.com/taylorplewe/monkey/main/bin/monkey.nes)
 
-To run it just open `bin\monkey.nes` in an NES emulator; [Mesen](http://mesen.ca/) is the best one out there
+Open `monkey.nes` in an NES emulator; [Mesen](http://mesen.ca/) is the best one out there
 
 Credits:
 - [Kumobius](http://www.kumobius.com/) for making the original game; I copied and modified a lot of the graphics over
