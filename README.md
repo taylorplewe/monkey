@@ -13,12 +13,12 @@ Credits:
 - famitone2 is the sound engine used
 
 Programs I used:
-- VSCode | my main editor, w/ a 6502/dundalk syntax highlite extension I wrote
-- Visual Studio 2022 | my editor for dundalk
-- yychr | used to layout the CHR memory
-- Aseprite | for creating the graphics
-- Mesen | my go-to emulator, but others I tested in were I think FCEUX, JNES, Nestopia, Nintendulator
-- FamiStudio | for creating all the sound effects
+- **VSCode** | my main editor, w/ a 6502/dundalk syntax highlite extension I wrote
+- **Visual Studio 2022** | my editor for dundalk
+- **yychr** | used to layout the CHR memory
+- **Aseprite** | for creating the graphics
+- **Mesen** | my go-to emulator, but others I tested in were I think FCEUX, JNES, Nestopia, Nintendulator
+- **FamiStudio** | for creating all the sound effects
 - For laying out the background tilemaps in the title/in-game I used a WPF/C# graphics editor I wrote for another NES project
 
 ---
