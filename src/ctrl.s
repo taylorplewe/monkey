@@ -8,7 +8,7 @@ var [1] chasespeed ; screen starts chasing you on higher scores!  Haha,
 var [2] hexscore ; just a hex repr. of display score; easier to do calculations on
 
 ; for the animation that runs when user selects a menu option
-const MONKEY_WORD_Y $0420 ; yeh I'm pretty sure I'm out of ZP space
+const MONKEY_WORD_Y $0420 ; I'm pretty sure I'm out of ZP space 😂
 const MONKEY_WORD_SPEED $0430
 const MONKEY_WORD_DONE $0450
 
