@@ -46,7 +46,7 @@ jsr monkey.Spin
 ```
 - `var [#] <name>` ; # = number of bytes to allocate to this label, `<name>` = name of label.  dundalk will allocate a spot in zeropage RAM for this label with # bytes.
 - `const <name> <value>` ; dundalk will replace all occurences of `<name>` across codebase with `<value>`.
-- `idset <name> { }` ; dundalk will replace each occurence of every label inside the `idset` across the codebase with its index inside the `idset`. e.g. with the following idset:
+- `idset <name> { }` ; basically an enum. dundalk will replace each occurence of every label inside the `idset` across the codebase with its index inside the `idset`. e.g. with the following idset:
 ```
 idset STATE {
 	IDLE
