@@ -1,5 +1,7 @@
 # monkey
 
+https://github.com/user-attachments/assets/94af0b22-d256-4f3f-993a-1837312a5074
+
 [Main website for the game](https://taylorplewe.github.io/monkey)
 
 NES port of the [Wall Kickers mobile game](http://wallkickers.com/)
