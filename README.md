@@ -1,14 +1,18 @@
 # monkey
 
-https://github.com/user-attachments/assets/94af0b22-d256-4f3f-993a-1837312a5074
+NES port of the [Wall Kickers mobile game](http://wallkickers.com/)
+
+[Video of the game running on an actual NES](https://github.com/user-attachments/assets/94af0b22-d256-4f3f-993a-1837312a5074)
 
 [Main website for the game](https://taylorplewe.github.io/monkey)
 
-NES port of the [Wall Kickers mobile game](http://wallkickers.com/)
+---
 
-Download: [monkey.nes](https://raw.githubusercontent.com/taylorplewe/monkey/main/bin/monkey.nes)
+### Download: [monkey.nes](https://raw.githubusercontent.com/taylorplewe/monkey/main/bin/monkey.nes)
 
 Open `monkey.nes` in an NES emulator; [Mesen](http://mesen.ca/) is the best one out there
+
+---
 
 Credits:
 - [Kumobius](http://www.kumobius.com/) for making the original game; I copied and modified a lot of the graphics over
