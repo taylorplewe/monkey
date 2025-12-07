@@ -32,7 +32,7 @@ Programs I used:
 Syntax of the code is 6502 assembly for use with the NESASM3 compiler, but with some minor additions I've added via a pre-compiler I wrote called dundalk:
 
 - `class <name>` ; all `var`s, `const`s and labels will be unique to this class and can be invoked elsewhere in the codebase with dot notation:
-```
+```assembly
 class monkey
 
 var [1] x
@@ -40,12 +40,12 @@ Spin:
   ...
   rts
 ```
-```
+```assembly
 class obj
 
 var [1] x
 ```
-```
+```assembly
 lda obj.x
 sta monkey.x
 jsr monkey.Spin
@@ -53,7 +53,7 @@ jsr monkey.Spin
 - `var [#] <name>` ; # = number of bytes to allocate to this label, `<name>` = name of label.  dundalk will allocate a spot in zeropage RAM for this label with # bytes.
 - `const <name> <value>` ; dundalk will replace all occurences of `<name>` across codebase with `<value>`.
 - `idset <name> { }` ; basically an enum. dundalk will replace each occurence of every label inside the `idset` across the codebase with its index inside the `idset`. e.g. with the following idset:
-```
+```assembly
 idset STATE {
 	IDLE
 	JUMP
@@ -62,7 +62,7 @@ idset STATE {
 ```
 dundalk would replace occurences of `STATE.BFLIP` with `2`.
 - using `var`s and `const`s underneath a global label e.g. `TurnAround:` will cause those vars and consts to be local to that label, which is very useful for function parameters, and can be invoked by dot notation:
-```
+```assembly
 class monkey
 
 DoSomething:
@@ -79,7 +79,7 @@ TurnAround:
   rts
 ```
 in another file:
-```
+```assembly
 lda #$ea
 sta monkey.TurnAround.newX
 jsr monkey.TurnAround
